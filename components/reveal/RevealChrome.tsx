@@ -152,18 +152,19 @@ export function RevealControls({
   onRemoveAdjunct: () => void
   onStartOver: () => void
 }) {
-  // On the cream page these are white pills with a hairline, not glass on dark.
+  // Transparent outline pills sitting directly on the cream page — the frame gives them
+  // no fill at all. Height 44, hairline at 18%, label at 70%.
   const control =
-    'bg-card border-card-hairline text-card-foreground rounded-pill font-mono border px-5 py-3.5 text-[0.6875rem] font-medium tracking-[0.08em] focus-visible:ring-accent focus-visible:ring-2 focus-visible:outline-none'
+    'rounded-pill font-mono h-11 border border-[rgb(29_29_27_/_0.18)] px-5 text-[0.6875rem] font-medium tracking-[0.08em] text-[rgb(29_29_27_/_0.7)] focus-visible:ring-accent focus-visible:ring-2 focus-visible:outline-none'
 
   return (
-    <section className="flex flex-col items-center gap-4">
-      <div className="flex w-full flex-wrap gap-3">
+    <section className="flex flex-col items-center gap-3.5">
+      <div className="flex w-full gap-2">
         <button
           type="button"
           disabled
           title="Awaiting a defined swap rule"
-          className={cn(control, 'flex-1 opacity-40')}
+          className={cn(control, 'flex-1 opacity-55')}
         >
           {REVEAL_CHROME.swapBase}
         </button>
@@ -181,7 +182,7 @@ export function RevealControls({
       <button
         type="button"
         onClick={onStartOver}
-        className="text-card-muted-foreground font-display focus-visible:ring-accent rounded-field text-[0.875rem] underline underline-offset-4 focus-visible:ring-2 focus-visible:outline-none"
+        className="font-display focus-visible:ring-accent rounded-field text-[0.875rem] text-[rgb(29_29_27_/_0.5)] underline underline-offset-4 focus-visible:ring-2 focus-visible:outline-none"
       >
         {REVEAL_CHROME.startOver}
       </button>
