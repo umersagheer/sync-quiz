@@ -172,3 +172,25 @@ describe('question progress', () => {
     expect(questionProgress('email', 'PT141')).toEqual({ current: 10, total: 10 })
   })
 })
+
+/**
+ * The reset behaviour behind the bug Umer hit: finishing the quiz left the answers in
+ * sessionStorage, so the flow bounced back to the reveal and a second run replayed the
+ * first one's answers.
+ */
+describe('after a completed run', () => {
+  it('sends a cleared draft back to the first question', () => {
+    expect(furthestStep({ secondaryLanes: [] })).toBe('name')
+    expect(redirectTarget('email', { secondaryLanes: [] })).toBe('/quiz/name')
+  })
+
+  it('still treats a complete draft as complete', () => {
+    const complete = answers({
+      lane: 'REPAIR',
+      discriminator: ['gut_mucosal'],
+      qualifier: 'mechanical',
+    })
+
+    expect(furthestStep(complete)).toBe('reveal')
+  })
+})

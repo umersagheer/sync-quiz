@@ -95,3 +95,56 @@ export const RECOMMEND_LESS = {
 /** §5.10 — handoff, shown on every reveal variant. */
 export const HANDOFF_DISCLAIMER =
   "This is a personalised match, not a prescription. Everything you've entered passes to your clinical assessment — a licensed provider makes the final call. Peptide therapy is prescribed at a provider's discretion."
+
+/**
+ * Chrome from the 390px reveal frames (`1:775`, `1:904`, `1:1005`, `1:1099`).
+ *
+ * These labels differ from the copy layer's §5 wording — the frames say "SELECT A PLAN"
+ * where the copy layer says "Choose your plan.", and add footnotes the copy layer does
+ * not contain. The frames are the confirmed artefact for this screen, so they win; the
+ * divergences are logged in docs/COPY_BACKLOG.md.
+ *
+ * Deliberately not included: "Returned by the engine — shown only on Shape 3 and 4" and
+ * "Fires only on Shape 2". Those are spec annotations to the developer drawn on the
+ * canvas, not customer-facing copy.
+ */
+export const REVEAL_CHROME = {
+  readEyebrow: '[name] — YOUR READ',
+  baseLabel: 'YOUR BASE PROTOCOL',
+  supportingLabel: 'SUPPORTING PROTOCOL',
+  pairsLabel: 'PAIRS WELL WITH',
+  planLabel: 'SELECT A PLAN',
+  planDefaultNote: 'DEFAULTED TO 3 MONTHS',
+  swapBase: 'SWAP THE BASE',
+  removeAdjunct: 'REMOVE ADJUNCT',
+  addToProtocol: 'ADD TO PROTOCOL',
+  startOver: 'Start over',
+  billingNote: 'Charged only after your protocol is approved. Cancel anytime.',
+  clinicianNote: 'EVERY PROTOCOL REVIEWED BY A LICENSED US CLINICIAN',
+  condensedLabel: 'YOUR PROTOCOL',
+  footerCta: 'Begin clinical assessment',
+} as const
+
+/** §5.9 as the frames draw it — different wording from the copy layer's recommend-less block. */
+export const TRUST_BLOCK = {
+  eyebrow: 'WHY ONLY ONE',
+  heading: 'We could have paired something with this.',
+  body: [
+    'Your answers do not support it, so we have not. If your clinician sees something at review that changes that, they will tell you — and you can add it then.',
+    'Recommending less is the point of the intake, not a smaller version of it.',
+  ],
+} as const
+
+/**
+ * The §4A pairing as the frames draw it.
+ *
+ * Backend §4A locks REPAIR → NAD+, but the frame shows a sleep product called "Deep
+ * Rest" at $65. That contradiction is recorded in BUILD_PLAN as design/spec discrepancy
+ * 2 and is still open with the client. The frame is what we build.
+ */
+export const PAIRS_WELL_WITH_CARD = {
+  eyebrow: 'OPTIONAL · SLEEP',
+  name: 'Deep Rest',
+  price: 65,
+  body: 'Most people in this lane are under-sleeping. Deep Rest supports the window your body actually repairs in.',
+} as const

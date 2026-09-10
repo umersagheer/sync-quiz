@@ -2,6 +2,8 @@
 
 import type { ScreenCopy } from '@/lib/shared/types/content.types'
 
+import { useQuizStore } from '@/lib/client/stores/quiz.store'
+
 import { PrimaryButton } from './PrimaryButton'
 import { SyncLogo } from './icons/SyncLogo'
 
@@ -14,6 +16,21 @@ import { SyncLogo } from './icons/SyncLogo'
  * as the words.
  */
 export function WelcomeScreen({ copy, onStart }: { copy: ScreenCopy; onStart: () => void }) {
+  const completedAnswers = useQuizStore((state) => state.completedAnswers)
+  const reset = useQuizStore((state) => state.reset)
+
+  /**
+   * Starting from welcome after a finished run begins a new one.
+   *
+   * Only a *completed* quiz is cleared. An unfinished one is left alone, because the
+   * guard lets someone step back to this screen mid-quiz and wiping their answers there
+   * would be the opposite of helpful.
+   */
+  const start = () => {
+    if (completedAnswers()) reset()
+    onStart()
+  }
+
   return (
     <div className="quiz-ground-molten flex min-h-dvh flex-col">
       <div className="relative mx-auto flex w-full max-w-[430px] flex-1 flex-col px-[18px] pt-[18px] pb-[calc(18px+env(safe-area-inset-bottom))]">
@@ -41,7 +58,7 @@ export function WelcomeScreen({ copy, onStart }: { copy: ScreenCopy; onStart: ()
         </div>
 
         <div className="flex flex-col gap-3">
-          <PrimaryButton onClick={onStart}>{copy.cta}</PrimaryButton>
+          <PrimaryButton onClick={start}>{copy.cta}</PrimaryButton>
           {/*
             Design-only line — it is not in the copy layer. Logged in docs/COPY_BACKLOG.md.
           */}

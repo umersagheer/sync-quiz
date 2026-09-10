@@ -1,4 +1,5 @@
 import type { DiscriminatorSignal, Lane, Qualifier } from './quiz.types'
+import type { ResultShape } from './engine.types'
 
 /**
  * Voice register, per the copy layer's appendix. Carried on each screen because the
@@ -102,7 +103,21 @@ export type CardCopy =
 
 export interface CompoundCopy {
   displayName: string
+  /** e.g. "Injection · 5mg vial · 12-week cycle". Only the Recovery lane has one. */
+  formLine?: string
   card: CardCopy
-  /** Monthly price at the base plan length, in USD. Null where the client has not priced it. */
+  /**
+   * Paragraph overrides keyed by result shape.
+   *
+   * The reveal frames settle a question the copy layer left open: card copy is written
+   * per *answer pattern*, not per compound. BPC-157 gets one paragraph as a solo
+   * recommend-less result ("adding a second compound would not make it faster") and a
+   * different one when it carries an adjunct. Where a shape has no override, `card`'s
+   * paragraph is used.
+   */
+  paragraphByShape?: Partial<Record<ResultShape, string>>
+  /** Monthly price in USD. Null where the client has not priced it. */
   monthlyPrice: number | null
+  /** Product render in `public/protocols/`. Only Recovery has one. */
+  image?: string
 }

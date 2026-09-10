@@ -1,5 +1,5 @@
-import { Reveal } from '@/components/quiz/Reveal'
+import { RevealScreen } from '@/components/reveal/RevealScreen'
 
 export default function RevealPage() {
-  return <Reveal />
+  return <RevealScreen />
 }

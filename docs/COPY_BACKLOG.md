@@ -73,6 +73,18 @@ explicit that these are exact prices rather than "starting from". A single month
 per compound is not enough to build that: we need to know how 1 / 3 / 6 month plans
 differ. This blocks the reveal's running total and sticky footer.
 
+## 4b · The read needs a headline and a second paragraph
+
+The reveal's read band is drawn as an eyebrow, a **29px headline**, **two** body
+paragraphs and a footer. The copy layer gives each of the ten read variants a **single
+paragraph** and no headline.
+
+So ten headlines and ten second paragraphs do not exist. The build sets the signed
+paragraph as a lead paragraph and omits the headline rather than inventing associative
+clinical claims — these are the lines the copy layer records Reid as signing. The frame's
+own example ("You are not under-recovering. You are under-signalling.") is not one of the
+ten variants and is not in the copy layer at all.
+
 ## 5 · Words that appear only in the design
 
 Found while building the quiz screens in Phase 4. These are in the confirmed frames but

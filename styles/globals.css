@@ -53,6 +53,19 @@
   --color-on-selected: #12080b;
   --color-on-selected-muted: rgb(18 8 11 / 0.62);
 
+  /* ---- The cream side ------------------------------------------------------
+   * The reveal inverts: a dark read band over the molten texture, then light cards
+   * for every protocol below it. Values from the 390px reveal frames.
+   */
+  /* The reveal's page ground below the read band — the "fade to cream". */
+  --color-reveal-page: #fcf8f1;
+  --color-card: #ffffff;
+  --color-card-foreground: #1d1d1b;
+  --color-card-muted-foreground: rgb(29 29 27 / 0.72);
+  --color-card-faint-foreground: rgb(29 29 27 / 0.5);
+  --color-card-hairline: rgb(29 29 27 / 0.08);
+  --color-chip: #f2ece2;
+
   /* ---- Radii --------------------------------------------------------------- */
   --radius-field: 0.75rem; /* 12 */
   --radius-option: 1.5rem; /* 24 */
@@ -122,6 +135,25 @@
       rgb(14 9 6 / 0.8) 100%
     ),
     url('/bg/quiz-field.webp');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover, cover;
+}
+
+/**
+ * The reveal's read band: a near-black ground under the molten texture, which is what
+ * makes the band read darker than the welcome screen despite sharing the image.
+ */
+@utility reveal-band {
+  background-color: var(--color-card-foreground);
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(29 29 27 / 0.55) 0%,
+      rgb(46 15 6 / 0.4) 45%,
+      rgb(29 29 27 / 0.82) 100%
+    ),
+    url('/bg/molten.webp');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover, cover;

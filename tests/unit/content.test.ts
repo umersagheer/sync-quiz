@@ -256,11 +256,31 @@ describe('reveal', () => {
  * lands; see docs/COPY_BACKLOG.md.
  */
 describe('copy backlog', () => {
-  const WRITTEN_COMPOUNDS: Compound[] = ['NAD+']
+  /**
+   * NAD+ came from the copy layer's worked example; BPC-157 and TB-500 were harvested
+   * from the reveal frames in Phase 5. Everything else is still with the client.
+   */
+  const WRITTEN_COMPOUNDS: Compound[] = ['NAD+', 'BPC-157', 'TB-500']
 
-  it('has the two worked examples the copy layer provides', () => {
+  it('has the copy that actually exists', () => {
     expect(BLEND_COPY.REPAIR.card.status).toBe('written')
-    expect(COMPOUND_COPY['NAD+'].card.status).toBe('written')
+    for (const compound of WRITTEN_COMPOUNDS) {
+      expect(COMPOUND_COPY[compound].card.status, compound).toBe('written')
+    }
+  })
+
+  /**
+   * The reveal frames settled the open question from Phase 2: card copy is written per
+   * answer pattern, not per compound. BPC-157 argues a different case as a solo
+   * recommend-less result than it does carrying an adjunct.
+   */
+  it('varies BPC-157 by result shape', () => {
+    expect(COMPOUND_COPY['BPC-157'].paragraphByShape?.SHAPE_1_SINGLE).toBeTruthy()
+    expect(COMPOUND_COPY['BPC-157'].paragraphByShape?.SHAPE_1_SINGLE).not.toBe(
+      COMPOUND_COPY['BPC-157'].card.status === 'written'
+        ? COMPOUND_COPY['BPC-157'].card.paragraph
+        : null,
+    )
   })
 
   it('marks every other protocol as pending', () => {
@@ -276,7 +296,10 @@ describe('copy backlog', () => {
   })
 
   it('gives written cards exactly four benefit chips', () => {
-    for (const copy of [BLEND_COPY.REPAIR.card, COMPOUND_COPY['NAD+'].card]) {
+    for (const copy of [
+      BLEND_COPY.REPAIR.card,
+      ...WRITTEN_COMPOUNDS.map((compound) => COMPOUND_COPY[compound].card),
+    ]) {
       if (copy.status !== 'written') throw new Error('expected written copy')
 
       expect(copy.chips).toHaveLength(4)

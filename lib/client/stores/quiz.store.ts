@@ -3,6 +3,9 @@ import type { QuizAnswers, QuizAnswersDraft } from '@/lib/shared/types/quiz.type
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
+import { queryClient } from '@/lib/client/query-client'
+import { QUIZ_QUERY_KEYS } from '@/lib/client/queries/quiz.query'
+
 interface QuizState {
   // State
   answers: QuizAnswersDraft
@@ -40,7 +43,21 @@ export const useQuizStore = create<QuizState>()(
       hydrated: false,
 
       setAnswers: (patch) => set((state) => ({ answers: { ...state.answers, ...patch } })),
-      reset: () => set({ answers: EMPTY }),
+
+      /**
+       * Clear the quiz.
+       *
+       * Three things have to go, not one. Resetting in-memory state alone left the
+       * persisted copy in sessionStorage, so a reload restored the finished quiz and the
+       * flow bounced straight back to the reveal — the demo could not be run twice
+       * without clearing storage by hand. The cached engine result has to go too, or a
+       * fresh run would show the previous protocol while the new one resolves.
+       */
+      reset: () => {
+        set({ answers: EMPTY })
+        useQuizStore.persist.clearStorage()
+        queryClient.removeQueries({ queryKey: QUIZ_QUERY_KEYS.all })
+      },
 
       completedAnswers: () => {
         const { answers } = get()

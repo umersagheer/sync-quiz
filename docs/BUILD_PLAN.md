@@ -453,10 +453,57 @@ the one. Do not drift into v3 without a new decision.
 
 ## Phase 5 — Reveal
 
-`ProtocolCard`, `BenefitChip`, `PlanSelector`, `StickyFooter`. Standard and recommend-less
-templates, running total, conditional supporting and pairs-well-with cards, swap/remove.
-
 Depends on: Phase 4, price table.
+
+**Status: done.** 171 tests green. Built from the **390px** set (`1:775`, `1:904`,
+`1:1005`, `1:1099`) — client-confirmed, and reconfirmed when the three candidate reveal
+sets were put side by side.
+
+- **The page is cream (`#fcf8f1`) with a dark read band on top.** The reveal inverts the
+  quiz's palette; that fade is the whole visual idea of the screen. It also means the
+  reveal's chrome is styled for a light ground, not the glass-on-dark of the quiz.
+- **The reveal's type system differs from the quiz** — Satoshi for headings _and_ body,
+  Source Code Pro for every label. SF Pro does not appear.
+- `ProtocolCard` is one component with a `role` prop; the frames draw the same card three
+  times with a different pill and eyebrow.
+- Plan selector is a real `<select>` under a styled row, so the platform picker and
+  keyboard come free.
+- The reset bug is fixed — see below.
+
+### Copy harvested from the frames
+
+The frames contained real copy the copy layer never had: chips, form lines, paragraphs and
+prices for **BPC-157**, **TB-500** and the **REPAIR blend**. Those are now `written`,
+flagged as design-sourced rather than copy-layer signed.
+
+**This settled the open question from Phase 2: card copy is per _answer pattern_, not per
+compound.** BPC-157 argues a different case as a solo recommend-less result than it does
+carrying an adjunct. Modelled as a per-shape override; `docs/COPY_BACKLOG.md` is updated
+so Amelia is briefed for the larger job.
+
+### Three things the client needs to resolve
+
+1. **The plan-length model does not exist.** The frames show `$289.00/month` on a 3-month
+   plan for a stack whose parts are $225 and $185 — that is not the sum, a percentage of
+   it, or either part. Plan length therefore does not yet change the total; it is one
+   function (`lib/client/reveal/pricing.ts`) and a test records the gap deliberately.
+2. **"Swap the base" has no defined behaviour** in either document. Rendered disabled
+   rather than inventing a swap rule, which would be inventing a clinical decision.
+3. **The frames' own example stack is not reachable by the engine.** Shape 3–4 is drawn as
+   BPC-157 + TB-500, but TB-500 is never an R8 cross-lane default, so no answer set
+   produces it. Related: because every R8 default is unpriced, **no Shape 3–4 path is
+   fully priced** — only Shape 1 and Shape 2 in the Recovery lane show a complete total.
+
+### The reset bug
+
+Finishing the quiz left the answers in `sessionStorage`, so returning to `/` bounced
+straight back to the reveal and a second run replayed the first one's answers.
+
+`reset()` now clears three things, not one: in-memory state, the persisted copy
+(`persist.clearStorage()`), and the cached engine result (`queryClient.removeQueries`) —
+otherwise a fresh run briefly shows the previous protocol. The welcome screen also clears
+a _completed_ run when Start is pressed, while deliberately leaving an unfinished one
+alone, since the guard allows stepping back to welcome mid-quiz.
 
 ## Phase 6 — Ship
 

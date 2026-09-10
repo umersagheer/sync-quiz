@@ -15,27 +15,31 @@ import type { CompoundCopy } from '../types/content.types'
  * substitutes would put unsigned medical claims in front of a customer, or into a client
  * deck as though approved. `docs/COPY_BACKLOG.md` lists exactly what is outstanding.
  *
- * Prices: every figure in the copy layer is a `$X` placeholder. The four below come from
- * the confirmed Figma reveal frames and cover the Recovery lane only.
+ * Prices: every figure in the copy layer is a `$X` placeholder. The figures below come
+ * from the confirmed Figma reveal frames and cover the Recovery lane only.
+ *
+ * Phase 5 harvested real chips, form lines and paragraphs for BPC-157, TB-500 and the
+ * REPAIR blend out of those frames. That copy is client-authored but came from the
+ * design rather than the signed copy layer, and in two places it contradicts it — the
+ * blend is drawn as two compounds rather than four, and its paragraph is different
+ * wording entirely. The frames are the newer, confirmed artefact so they win; both
+ * divergences are logged in docs/COPY_BACKLOG.md.
  */
 
 const pending = (awaiting: string): CompoundCopy['card'] => ({ status: 'pending', awaiting })
 
 export const BLEND_COPY: Record<BlendId, CompoundCopy> = {
   REPAIR: {
-    displayName: 'REPAIR',
+    displayName: 'REPAIR BLEND',
+    formLine: 'BPC-157 + TB-500 · single vial · 12-week cycle',
     card: {
       status: 'written',
-      chips: [
-        '🧬 Systemic repair',
-        '🔥 Targets inflammation',
-        '💊 Supports gut lining',
-        '⚙️ Rebuilds connective tissue',
-      ],
+      chips: ['Tissue repair', 'Gut lining', 'Joint integrity', 'Recovery depth'],
       paragraph:
-        'You told us the recovery is showing up in your gut and something structural. REPAIR is built for exactly that pattern — four compounds working on the shared repair system, not one tissue at a time.',
+        'A tendon that has not settled in six to twelve months, with broken sleep alongside it. The blend runs both signals from one vial, which is why nothing else is added here.',
     },
     monthlyPrice: 340,
+    image: '/protocols/recovery-vial.webp',
   },
   PERFORM: {
     displayName: 'PERFORM',
@@ -72,13 +76,32 @@ export const COMPOUND_COPY: Record<Compound, CompoundCopy> = {
   },
   'BPC-157': {
     displayName: 'BPC-157',
-    card: pending('4 benefit chips + 3-line paragraph'),
+    formLine: 'Injection · 5mg vial · 12-week cycle',
+    card: {
+      status: 'written',
+      chips: ['Tissue repair', 'Gut lining', 'Joint integrity', 'Recovery depth'],
+      paragraph:
+        'A tendon that has not settled in six to twelve months, with broken sleep alongside it. BPC-157 signals repair at the site instead of adding load to a system already carrying plenty.',
+    },
+    // The recommend-less reveal argues the opposite case, so it gets its own paragraph.
+    paragraphByShape: {
+      SHAPE_1_SINGLE:
+        'One site, under a year, with nothing else pulling on it. BPC-157 on its own is enough to signal repair there — adding a second compound would not make it faster.',
+    },
     monthlyPrice: 225,
+    image: '/protocols/recovery-vial.webp',
   },
   'TB-500': {
     displayName: 'TB-500',
-    card: pending('4 benefit chips + 3-line paragraph'),
+    formLine: 'Injection · 5mg vial · runs with your base',
+    card: {
+      status: 'written',
+      chips: ['Systemic reach', 'Flexibility', 'Inflammation', 'Cycle support'],
+      paragraph:
+        'You flagged stiffness in more than one place. TB-500 extends reach beyond the primary site, which is why it pairs here rather than standing on its own.',
+    },
     monthlyPrice: 185,
+    image: '/protocols/recovery-vial.webp',
   },
   KPV: {
     displayName: 'KPV',
