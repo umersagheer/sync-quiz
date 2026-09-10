@@ -51,12 +51,25 @@ export const SEX_AT_BIRTH_SCREEN: ChoiceScreen<SexAtBirth> = {
 }
 
 /** S5 · PRIMARY GOAL · DIRECT · SINGLE-SELECT. Sets the lane per Backend R1. */
+/**
+ * The lane options, split into title and subtitle as the design draws them.
+ *
+ * Three of the five are just the copy layer's line partitioned at its em dash. Two are
+ * not: "Fat, definition, plateau" and "Desire and response" appear only in the design —
+ * the copy layer gives those options no second line at all. The frames are the newer,
+ * client-confirmed artefact so they win, but the additions are flagged in
+ * docs/COPY_BACKLOG.md as words that never went through the copy layer.
+ */
 export const LANE_OPTIONS: ChoiceOption<Lane>[] = [
-  { value: 'REPAIR', label: 'Recover — from injury, training, or gut issues' },
-  { value: 'PERFORM', label: 'Perform — build, train, recover harder' },
-  { value: 'DEFINE', label: 'Change my body composition' },
-  { value: 'RESTORE', label: 'Age slower — skin, energy, longevity' },
-  { value: 'PT141', label: 'Sex drive and arousal' },
+  { value: 'REPAIR', label: 'Recover', description: 'From injury, training, or gut issues' },
+  { value: 'PERFORM', label: 'Perform', description: 'Build, train, recover harder' },
+  {
+    value: 'DEFINE',
+    label: 'Change my body composition',
+    description: 'Fat, definition, plateau',
+  },
+  { value: 'RESTORE', label: 'Age slower', description: 'Skin, energy, longevity' },
+  { value: 'PT141', label: 'Sex drive and arousal', description: 'Desire and response' },
 ]
 
 export const PRIMARY_GOAL_SCREEN: ChoiceScreen<Lane> = {

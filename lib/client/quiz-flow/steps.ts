@@ -140,3 +140,47 @@ export const nextStep = (step: StepId, lane: Lane | undefined): StepId | 'reveal
 
   return index >= 0 && index < steps.length - 1 ? steps[index + 1] : 'reveal'
 }
+
+/**
+ * The eleven steps that ask a question.
+ *
+ * The design's progress pill reads "3 of 11" while the flow has fourteen steps — the
+ * difference is that welcome, the interstitial and the education screen ask nothing and
+ * are excluded from the count. PT-141 has no discriminator screen, so that lane honestly
+ * has ten questions rather than eleven and the total is computed per lane instead of
+ * being hardcoded to match the drawn frame.
+ */
+const QUESTION_STEPS: StepId[] = [
+  'name',
+  'sex',
+  'goal',
+  'depth',
+  'secondary',
+  'discriminator',
+  'qualifier',
+  'sleep',
+  'stress',
+  'goal90',
+  'email',
+]
+
+export const isQuestion = (step: StepId): boolean => QUESTION_STEPS.includes(step)
+
+export interface QuestionProgress {
+  current: number
+  total: number
+}
+
+/** Position within the lane's questions, or null on a screen that asks nothing. */
+export const questionProgress = (step: StepId, lane: Lane | undefined): QuestionProgress | null => {
+  if (!isQuestion(step)) return null
+
+  // Before the lane is chosen the flow is only known as far as the goal screen, which
+  // would make the total read "1 of 5" and then jump to "6 of 11" once a lane is picked.
+  // Count against a full branching flow instead, so the denominator is stable from the
+  // first screen. PT-141 genuinely has ten questions and reports ten.
+  const questions = stepsFor(lane ?? 'REPAIR').filter(isQuestion)
+  const index = questions.indexOf(step)
+
+  return index === -1 ? null : { current: index + 1, total: questions.length }
+}

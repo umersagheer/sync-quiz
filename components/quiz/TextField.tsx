@@ -13,7 +13,6 @@ interface TextFieldProps {
   type?: 'text' | 'email'
   placeholder?: string
   error?: string
-  /** Hide the label visually but keep it for screen readers. */
   hideLabel?: boolean
   multiline?: boolean
   maxLength?: number
@@ -21,12 +20,12 @@ interface TextFieldProps {
 }
 
 /**
- * A labelled text input.
+ * A labelled text input on a glass field.
  *
- * Every field gets a real `<label>` even where the design shows none — a placeholder is
- * not a label; it disappears on focus and screen readers announce it inconsistently.
- * `input` and `textarea` are rendered as separate elements rather than one dynamic tag,
- * because their prop types genuinely differ and casting between them hides real errors.
+ * Every field keeps a real `<label>` even where the design shows none — a placeholder is
+ * not a label; it vanishes on focus and is announced inconsistently. `input` and
+ * `textarea` render as separate elements rather than one dynamic tag, because their prop
+ * types genuinely differ.
  */
 export function TextField({
   label,
@@ -56,22 +55,25 @@ export function TextField({
     'aria-invalid': error ? true : undefined,
     'aria-describedby': error ? errorId : undefined,
     className: cn(
-      'border-border bg-surface rounded-control w-full border px-4 py-3 text-sm',
-      'focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-      error && 'border-primary',
+      'glass rounded-card text-body text-foreground placeholder:text-foreground-faint w-full px-[18px] py-[15px]',
+      'focus-visible:ring-foreground/70 focus-visible:ring-offset-ground-top focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+      error && 'border-accent',
     ),
   }
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <label htmlFor={name} className={cn('text-sm font-medium', hideLabel && 'sr-only')}>
+      <label
+        htmlFor={name}
+        className={cn('text-caption text-foreground-secondary font-[590]', hideLabel && 'sr-only')}
+      >
         {label}
       </label>
 
       {multiline ? <textarea rows={4} {...shared} /> : <input type={type} {...shared} />}
 
       {error ? (
-        <p id={errorId} role="alert" className="text-primary text-xs">
+        <p id={errorId} role="alert" className="text-caption text-accent-soft">
           {error}
         </p>
       ) : null}

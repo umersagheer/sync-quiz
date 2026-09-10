@@ -7,6 +7,7 @@ import {
   isComplete,
   nextStep,
   previousStep,
+  questionProgress,
   redirectTarget,
   stepsFor,
 } from '@/lib/client/quiz-flow/steps'
@@ -144,5 +145,30 @@ describe('route guard', () => {
     const complete = answers({ lane: 'PT141', discriminator: [], qualifier: 'desire' })
 
     expect(furthestStep(complete)).toBe('reveal')
+  })
+})
+
+describe('question progress', () => {
+  it('numbers only the screens that ask something', () => {
+    expect(questionProgress('welcome', 'REPAIR')).toBeNull()
+    expect(questionProgress('interstitial', 'REPAIR')).toBeNull()
+    expect(questionProgress('education', 'REPAIR')).toBeNull()
+  })
+
+  it('matches the design — eleven questions, name first, email last', () => {
+    expect(questionProgress('name', 'REPAIR')).toEqual({ current: 1, total: 11 })
+    expect(questionProgress('goal', 'REPAIR')).toEqual({ current: 3, total: 11 })
+    expect(questionProgress('email', 'REPAIR')).toEqual({ current: 11, total: 11 })
+  })
+
+  /** Regression: the total collapsed to 5 before a lane was chosen, then jumped to 11. */
+  it('keeps the total stable before a lane is picked', () => {
+    expect(questionProgress('name', undefined)).toEqual({ current: 1, total: 11 })
+    expect(questionProgress('depth', undefined)).toEqual({ current: 4, total: 11 })
+  })
+
+  /** PT-141 skips the discriminator, so it honestly has ten. */
+  it('reports ten for PT141', () => {
+    expect(questionProgress('email', 'PT141')).toEqual({ current: 10, total: 10 })
   })
 })

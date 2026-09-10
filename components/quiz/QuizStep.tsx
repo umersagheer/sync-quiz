@@ -40,12 +40,21 @@ import {
   secondaryGoalOptions,
 } from '@/lib/shared/content/screens.content'
 
-import { EducationPanel } from './EducationPanel'
+import { EducationSheet } from './EducationSheet'
+import { WelcomeScreen } from './WelcomeScreen'
+import { LANE_ICONS } from './icons/LaneIcons'
 import { OptionGroup } from './OptionGroup'
 import { PrimaryButton } from './PrimaryButton'
+import { ProgressHeader } from './ProgressHeader'
 import { RecognitionLine } from './RecognitionLine'
 import { ScreenShell } from './ScreenShell'
 import { TextField } from './TextField'
+
+/** Option descriptions keyed by value, for the lists that carry a second line. */
+const descriptionsOf = <V extends string>(options: { value: V; description?: string }[]) =>
+  Object.fromEntries(
+    options.filter((o) => o.description).map((o) => [o.value, o.description as string]),
+  )
 
 const withName = (text: string, name: string | undefined) =>
   text.replace('[name]', name?.trim() || 'there')
@@ -83,22 +92,14 @@ export function QuizStep({ step }: { step: StepId }) {
   const branch = answers.lane ? BRANCHES[answers.lane] : null
   const goNext = () => router.push(pathFor(nextStep(step, answers.lane)))
   const back = previousStep(step, answers.lane)
+  const goBack = back ? () => router.push(pathFor(back)) : undefined
+
+  const header = <ProgressHeader step={step} lane={answers.lane} onBack={goBack} />
 
   const nextButton = (label = 'Continue', disabled = !isComplete(step, answers)) => (
-    <>
-      <PrimaryButton onClick={goNext} disabled={disabled}>
-        {label}
-      </PrimaryButton>
-      {back ? (
-        <button
-          type="button"
-          onClick={() => router.push(pathFor(back))}
-          className="text-muted-foreground focus-visible:ring-ring rounded-control py-2 text-xs focus-visible:ring-2"
-        >
-          Back
-        </button>
-      ) : null}
-    </>
+    <PrimaryButton onClick={goNext} disabled={disabled}>
+      {label}
+    </PrimaryButton>
   )
 
   const text = (field: 'firstName' | 'ninetyDayGoalText' | 'email' | 'sexSelfDescribe') => ({
@@ -109,16 +110,20 @@ export function QuizStep({ step }: { step: StepId }) {
 
   switch (step) {
     case 'welcome':
-      return <ScreenShell {...WELCOME_SCREEN} footer={nextButton(WELCOME_SCREEN.cta, false)} />
+      return <WelcomeScreen copy={WELCOME_SCREEN} onStart={goNext} />
 
     case 'name':
       return (
-        <ScreenShell {...NAME_SCREEN} footer={nextButton()}>
+        <ScreenShell {...NAME_SCREEN} header={header} footer={nextButton()}>
+          {/*
+            No autoFocus. The frame draws S2 with the keyboard already up, but iOS Safari
+            blocks programmatic focus without a user gesture, so it would not fire on the
+            device this is designed for — and it trips the a11y rule for no gain.
+          */}
           <TextField
             label={NAME_SCREEN.heading}
             name="firstName"
             hideLabel
-            autoFocus
             {...text('firstName')}
           />
         </ScreenShell>
@@ -135,7 +140,7 @@ export function QuizStep({ step }: { step: StepId }) {
 
     case 'sex':
       return (
-        <ScreenShell {...SEX_AT_BIRTH_SCREEN} footer={nextButton()}>
+        <ScreenShell {...SEX_AT_BIRTH_SCREEN} header={header} footer={nextButton()}>
           <OptionGroup<SexAtBirth>
             legend={SEX_AT_BIRTH_SCREEN.heading}
             name="sexAtBirth"
@@ -155,11 +160,13 @@ export function QuizStep({ step }: { step: StepId }) {
 
     case 'goal':
       return (
-        <ScreenShell {...PRIMARY_GOAL_SCREEN} footer={nextButton()}>
+        <ScreenShell {...PRIMARY_GOAL_SCREEN} header={header} footer={nextButton()}>
           <OptionGroup<Lane>
             legend={PRIMARY_GOAL_SCREEN.heading}
             name="lane"
             options={PRIMARY_GOAL_SCREEN.options}
+            icons={LANE_ICONS}
+            descriptions={descriptionsOf(PRIMARY_GOAL_SCREEN.options)}
             value={answers.lane}
             onChange={(value) =>
               // Changing lane invalidates the branch answers — they belong to the old one.
@@ -176,7 +183,7 @@ export function QuizStep({ step }: { step: StepId }) {
 
     case 'depth':
       return (
-        <ScreenShell {...DEPTH_SCREEN} footer={nextButton()}>
+        <ScreenShell {...DEPTH_SCREEN} header={header} footer={nextButton()}>
           <OptionGroup<Depth>
             legend={DEPTH_SCREEN.heading}
             name="depth"
@@ -192,12 +199,14 @@ export function QuizStep({ step }: { step: StepId }) {
 
     case 'secondary':
       return (
-        <ScreenShell {...SECONDARY_GOALS_SCREEN} footer={nextButton()}>
+        <ScreenShell {...SECONDARY_GOALS_SCREEN} header={header} footer={nextButton()}>
           <OptionGroup<Lane>
             legend={SECONDARY_GOALS_SCREEN.heading}
             name="secondaryLanes"
             multiple
             options={secondaryGoalOptions(answers.lane!)}
+            icons={LANE_ICONS}
+            descriptions={descriptionsOf(secondaryGoalOptions(answers.lane!))}
             value={answers.secondaryLanes ?? []}
             onChange={(value) => {
               const current = answers.secondaryLanes ?? []
@@ -223,7 +232,9 @@ export function QuizStep({ step }: { step: StepId }) {
         <ScreenShell
           register="direct"
           heading={discriminator.heading}
+          headingSize="sm"
           body={discriminator.body ? [discriminator.body] : undefined}
+          header={header}
           footer={nextButton()}
         >
           <OptionGroup<DiscriminatorSignal>
@@ -267,6 +278,7 @@ export function QuizStep({ step }: { step: StepId }) {
           register="direct"
           heading={branch.qualifier.heading}
           body={branch.qualifier.body ? [branch.qualifier.body] : undefined}
+          header={header}
           footer={nextButton()}
         >
           <OptionGroup<Qualifier>
@@ -287,17 +299,23 @@ export function QuizStep({ step }: { step: StepId }) {
       return (
         <ScreenShell
           register="warm"
-          heading={branch.education.heading}
-          footer={nextButton(branch.education.cta, false)}
-        >
-          <EducationPanel education={branch.education} />
-        </ScreenShell>
+          // The frames give this screen no back control — it is a sheet you dismiss
+          // forward, and the pill sits centred on its own.
+          header={<ProgressHeader step={step} lane={answers.lane} />}
+          sheet={
+            <EducationSheet
+              education={branch.education}
+              eyebrow="WHY WE ASKED"
+              onContinue={goNext}
+            />
+          }
+        />
       )
     }
 
     case 'sleep':
       return (
-        <ScreenShell {...SLEEP_SCREEN} footer={nextButton()}>
+        <ScreenShell {...SLEEP_SCREEN} headingSize="md" header={header} footer={nextButton()}>
           <OptionGroup<SleepHours>
             legend={SLEEP_SCREEN.heading}
             name="sleepHours"
@@ -310,7 +328,7 @@ export function QuizStep({ step }: { step: StepId }) {
 
     case 'stress':
       return (
-        <ScreenShell {...STRESS_SCREEN} footer={nextButton()}>
+        <ScreenShell {...STRESS_SCREEN} header={header} footer={nextButton()}>
           <OptionGroup<StressLevel>
             legend={STRESS_SCREEN.heading}
             name="stressLevel"
@@ -323,7 +341,7 @@ export function QuizStep({ step }: { step: StepId }) {
 
     case 'goal90':
       return (
-        <ScreenShell {...NINETY_DAY_SCREEN} footer={nextButton()}>
+        <ScreenShell {...NINETY_DAY_SCREEN} header={header} footer={nextButton()}>
           <TextField
             label={NINETY_DAY_SCREEN.heading}
             name="ninetyDayGoalText"
@@ -344,7 +362,12 @@ export function QuizStep({ step }: { step: StepId }) {
 
     case 'email':
       return (
-        <ScreenShell {...EMAIL_SCREEN} footer={nextButton(EMAIL_SCREEN.cta)}>
+        <ScreenShell
+          {...EMAIL_SCREEN}
+          headingSize="md"
+          header={header}
+          footer={nextButton(EMAIL_SCREEN.cta)}
+        >
           <TextField
             label={EMAIL_SCREEN.heading}
             name="email"

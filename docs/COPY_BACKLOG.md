@@ -73,6 +73,26 @@ explicit that these are exact prices rather than "starting from". A single month
 per compound is not enough to build that: we need to know how 1 / 3 / 6 month plans
 differ. This blocks the reveal's running total and sticky footer.
 
+## 5 · Words that appear only in the design
+
+Found while building the quiz screens in Phase 4. These are in the confirmed frames but
+nowhere in the copy layer, so they have never been through copy review. They are in the
+build because the frames are the newer artefact — but somebody should own them.
+
+| Screen               | Line                                                    |
+| -------------------- | ------------------------------------------------------- |
+| S5 / S7 lane options | `Fat, definition, plateau` (Change my body composition) |
+| S5 / S7 lane options | `Desire and response` (Sex drive and arousal)           |
+| S1 welcome           | `About two minutes · No card required`                  |
+| Branch education     | `No product mentioned on this screen — education only.` |
+| Branch education     | The `WHY WE ASKED` eyebrow                              |
+| Recognition callouts | The `WE SEE THIS OFTEN` eyebrow                         |
+
+The lane subtitles are the notable ones: three of the five are just the copy layer's line
+split at its em dash, but those two are new sentences. The last one is also a compliance-
+adjacent claim about the screen's own content, which is exactly the kind of line that
+should be signed rather than inherited from a mockup.
+
 ---
 
 ## Two questions that change the size of this list

@@ -74,15 +74,21 @@ the build follows, and the Figma frame names agree with it.
 File: `https://www.figma.com/design/kxBzmwCi8NCZR69YeybQOm/Sync.-Website`
 File key `kxBzmwCi8NCZR69YeybQOm` · Quiz page `1:772`.
 
-> **The Figma MCP quota is spent — do not try it again.** The View seat on the
-> Professional plan hit its tool-call limit during Phase 0 and it does not reset usefully.
-> `get_variable_defs`, `get_screenshot` and `get_metadata` all fail. Design context comes
-> from **screenshots the client-side team exports**, which Umer has offered to supply.
+> **Use the Figma REST API, not the MCP.** The MCP hit its View-seat tool-call limit in
+> Phase 0 and stays exhausted — `get_variable_defs`, `get_screenshot` and `get_metadata`
+> all fail. The REST API is a separate quota and works: a read-only personal access token
+> lives in `.env.local` as `FIGMA_TOKEN` (gitignored, never commit it).
 >
-> When Phase 4 starts, ask for specific frames rather than all twenty-two: the shared
-> screens plus Branch A (branches B–E reuse Branch A's structure), the three reveal
-> variants, and — easy to forget — the sticky-footer frame `1:1099`, which is the only
-> record of the pin-on-scroll behaviour and the condensed header. Ask for 2x or better.
+> ```
+> GET /v1/files/:key/nodes?ids=1:1245        # exact Auto Layout, fills, type, effects
+> GET /v1/images/:key?ids=...&format=svg     # icons and vectors
+> GET /v1/images/:key?ids=...&format=png&scale=2   # visual reference
+> GET /v1/files/:key/images                  # imageRef -> real asset URLs
+> ```
+>
+> `/v1/files/:key/styles` returns 403 and `/variables/local` is Enterprise-only; neither
+> matters, because resolved values are in the node JSON. This removes any need for
+> manually exported screenshots.
 
 Use the `figma-to-code-react` skill when building any of these frames.
 
@@ -393,17 +399,57 @@ the walkthrough test drives all five lanes end to end — but someone should cli
 
 ## Phase 4 — Screens
 
-Apply the Figma design to the components Phase 3 built — `ScreenShell`, `OptionGroup`,
-`RecognitionLine`, `EducationPanel`, `TextField`, `PrimaryButton` — and add
-`ProgressHeader`. The structure and accessibility already exist; this phase is the visual
-layer plus the placeholder-token sweep.
+Apply the Figma design to the components Phase 3 built, and add `ProgressHeader`.
 
-Option cards are already real radio and checkbox inputs — keep them that way and style via
-`peer-checked:` rather than replacing them with divs.
+**Status: done.** 160 tests green. All fourteen quiz screens styled against the
+**`SYNC · Quiz — APPLE LIQUID GLASS (iOS 26)`** set (402px, Quiz page).
 
-**Blocked on design screenshots** (the Figma MCP quota is gone — see Design above).
+- **Real tokens** replace the Phase 0 placeholders in `styles/globals.css`, pulled from
+  the frames via the REST API. Ground is a blurred photographic texture under a
+  three-stop translucent gradient; glass is a `glass` utility composing the four layers
+  the design uses.
+- **Fonts**: Satoshi self-hosted from Fontshare (headings, ITF Free Font License in
+  `app/fonts/`), the `-apple-system` stack for SF Pro (renders the genuine face on Apple
+  devices), Source Code Pro for the button label.
+- **Assets**: five lane icons and the SYNC wordmark redrawn as inline SVG with
+  `currentColor`; two background textures at **8 KB total**, down from 18 MB, with the
+  design's 48px blur baked into the asset rather than paid for at runtime.
+- **The progress bar counts questions, not screens** — eleven, excluding welcome,
+  interstitial and education. PT-141 honestly reports ten.
+- Verified with headless screenshots against the Figma renders, screen by screen. No
+  horizontal overflow at 320 / 402 / 768 / 1280. Radio groups keep one tab stop with
+  visible focus.
 
-Depends on: Phase 0 tokens.
+### Bugs this phase surfaced
+
+- **`tailwind-merge` was silently dropping classes.** It does not know this project's
+  `--text-*` tokens, so it filed `text-title` (a size) and `text-on-selected` (a colour)
+  in one conflict group and kept only the last. The primary button rendered white-on-
+  white and the text field lost its font size. Nothing in the source looked wrong.
+  `cn()` now extends the merger with our type scale, pinned by `tests/unit/cn.test.ts`.
+  **Any new `--text-*` token must be added there too.**
+- **The progress total collapsed to "1 of 5"** before a lane was chosen, then jumped to 11. It now counts against a full branching flow.
+- `peer-checked:` cannot style nested children — it compiles to a sibling combinator.
+  The option cards use `group-has-[:checked]:` instead.
+
+### Known deviations
+
+- The frames use Figma's native **`GLASS`** effect, which has no CSS equivalent.
+  `backdrop-filter: blur() saturate()` is the closest approximation; surfaces read very
+  slightly lighter than the render. Every extracted value otherwise matches.
+- Device chrome — status bar, Dynamic Island, home indicator, the mocked iOS keyboard —
+  is deliberately not built. It is mockup furniture, not UI.
+- Only a 402px frame exists, so the layout above that width is an extrapolation: a
+  centred column on the same ground.
+- Six lines of copy appear only in the design and never went through the copy layer.
+  Listed in `docs/COPY_BACKLOG.md` §5.
+
+### The v3 set — do not build
+
+The Quiz page also holds an `Updated designs` section of `SYNC · Quiz v3` frames at
+390px, in a **light cream** direction entirely unlike the Liquid Glass set. It is not
+what we are building. Confirmed with the client that the first set — Liquid Glass — is
+the one. Do not drift into v3 without a new decision.
 
 ## Phase 5 — Reveal
 

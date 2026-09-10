@@ -10,6 +10,11 @@ export type Register = 'warm' | 'direct' | 'warm_adjacent'
 export interface ChoiceOption<V extends string> {
   value: V
   label: string
+  /**
+   * Secondary line under the label. Only the lane options carry one — every other
+   * screen's options are a single line, matching the copy layer exactly.
+   */
+  description?: string
   /** Reveals a free-text field when chosen — S4's "prefer to self-describe". */
   freeText?: boolean
 }

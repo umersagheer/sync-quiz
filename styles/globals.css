@@ -1,65 +1,184 @@
 @import 'tailwindcss';
 
 /**
- * Design tokens.
+ * Design tokens — SYNC · Quiz, "Apple Liquid Glass (iOS 26)".
  *
- * PLACEHOLDER VALUES. The Figma file (kxBzmwCi8NCZR69YeybQOm) could not be read
- * when this was written — the View seat had hit its MCP tool-call limit. Names,
- * roles and structure are settled; every value marked PLACEHOLDER is a stand-in
- * approximating the "Apple Liquid Glass" deep-maroon direction and must be swept
- * against `get_variable_defs` on node 1:772 before the reveal is built.
+ * Extracted from the Figma frames via the REST API, not sampled by eye: every value
+ * below appears in the source document. Frames are 402x874 (`SYNC · Quiz LG — …`) on
+ * the Quiz page of file kxBzmwCi8NCZR69YeybQOm.
  *
- * The quiz commits to one visual world rather than following the OS theme: the
- * reveal deliberately opens on a dark maroon band and fades to cream protocol
- * cards *within the same page*, so dark and light are two surfaces here, not two
- * themes. `background`/`surface` are the maroon side; `card` is the cream side.
+ * The app commits to one visual world rather than following the OS theme — the design
+ * is a single dark maroon environment, and an OS-driven light variant would be a design
+ * nobody drew.
  */
 @theme {
-  /* Ground and text — the maroon side */
-  --color-background: #2a0e14; /* PLACEHOLDER */
-  --color-foreground: #f5ede6; /* PLACEHOLDER */
-  --color-muted-foreground: #c3a9a4; /* PLACEHOLDER */
+  /* ---- Ground -------------------------------------------------------------
+   * Not a flat colour. A blurred photographic texture with a three-stop vertical
+   * gradient over it; the gradient stops are themselves translucent, which is what
+   * lets the texture mottle through. See `.quiz-ground` below.
+   */
+  --color-ground-top: #12080b;
+  --color-ground-mid: #2e0f06;
+  --color-ground-deep: #0e0906;
+  --color-background: #12080b;
 
-  /* Raised surfaces on the maroon ground */
-  --color-surface: #3a161e; /* PLACEHOLDER */
-  --color-surface-muted: #4a1f28; /* PLACEHOLDER */
+  /* ---- Foreground ---------------------------------------------------------
+   * White at deliberate opacities rather than tinted greys. The design uses four
+   * levels consistently; naming them stops components inventing a fifth.
+   */
+  --color-foreground: rgb(255 255 255 / 0.95);
+  --color-foreground-secondary: rgb(255 255 255 / 0.65);
+  --color-foreground-muted: rgb(255 255 255 / 0.5);
+  --color-foreground-faint: rgb(255 255 255 / 0.35);
 
-  /* The cream side — protocol cards in the reveal */
-  --color-card: #f5efe7; /* PLACEHOLDER */
-  --color-card-foreground: #2a0e14; /* PLACEHOLDER */
-  --color-card-muted-foreground: #6b5750; /* PLACEHOLDER */
+  /* ---- Accent -------------------------------------------------------------- */
+  --color-accent: #d03516;
+  --color-accent-soft: #ff9c7d;
 
-  /* Liquid Glass — translucent panels over the gradient */
-  --color-glass: rgb(255 255 255 / 8%); /* PLACEHOLDER */
-  --color-glass-strong: rgb(255 255 255 / 14%); /* PLACEHOLDER */
-  --color-glass-border: rgb(255 255 255 / 16%); /* PLACEHOLDER */
+  /* ---- Glass ---------------------------------------------------------------
+   * Built from layers, not `backdrop-filter`: a translucent white gradient, a
+   * hairline border, an inner top highlight and a soft drop shadow. Composed as
+   * the `glass` utility below.
+   */
+  --color-glass-top: rgb(255 255 255 / 0.2);
+  --color-glass-bottom: rgb(255 255 255 / 0.09);
+  --color-glass-flat: rgb(255 255 255 / 0.06);
+  --color-glass-hairline: rgb(255 255 255 / 0.14);
+  --color-glass-hairline-strong: rgb(255 255 255 / 0.42);
 
-  /* Action */
-  --color-primary: #8e2436; /* PLACEHOLDER */
-  --color-primary-foreground: #fff8f3; /* PLACEHOLDER */
-  --color-accent: #d9a05b; /* PLACEHOLDER */
+  /* ---- Selected state ------------------------------------------------------
+   * A chosen option flips to a near-solid white card with dark text.
+   */
+  --color-selected: rgb(255 255 255 / 0.95);
+  --color-on-selected: #12080b;
+  --color-on-selected-muted: rgb(18 8 11 / 0.62);
 
-  /* Lines and focus */
-  --color-border: rgb(255 255 255 / 12%); /* PLACEHOLDER */
-  --color-border-strong: rgb(255 255 255 / 24%); /* PLACEHOLDER */
-  --color-ring: #d9a05b; /* PLACEHOLDER */
-
-  /* Radii */
-  --radius-control: 0.75rem; /* PLACEHOLDER */
-  --radius-card: 1.25rem; /* PLACEHOLDER */
+  /* ---- Radii --------------------------------------------------------------- */
+  --radius-field: 0.75rem; /* 12 */
+  --radius-option: 1.5rem; /* 24 */
+  --radius-card: 1.375rem; /* 22 */
+  --radius-sheet: 1.625rem; /* 26 */
   --radius-pill: 9999px;
 
-  /* Type. Size scale stays on Tailwind's default until Figma gives real values —
-     inventing a scale now would be a number to unlearn later. */
-  --font-sans: var(--font-app-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
+  /* ---- Shadows ------------------------------------------------------------- */
+  --shadow-glass: 0 8px 20px rgb(0 0 0 / 0.2);
+  --shadow-glass-lg: 0 12px 28px rgb(0 0 0 / 0.32);
+  --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.3);
+
+  /* ---- Type ----------------------------------------------------------------
+   * Three faces, deliberately. Satoshi carries every heading; SF Pro (via the
+   * system stack, which renders the genuine face on Apple devices) carries the UI;
+   * Source Code Pro is used for one thing only — the primary button label.
+   */
+  --font-display: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto,
+    ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-source-code), ui-monospace, SFMono-Regular, monospace;
+
+  --text-display: 2rem; /* 32 */
+  --text-display--line-height: 2.375rem; /* 38 */
+  --text-display--letter-spacing: -0.015em;
+  --text-display-md: 1.875rem; /* 30 */
+  --text-display-md--line-height: 2.25rem;
+  --text-display-md--letter-spacing: -0.015em;
+  --text-display-sm: 1.75rem; /* 28 */
+  --text-display-sm--line-height: 2.125rem;
+  --text-display-sm--letter-spacing: -0.015em;
+
+  --text-title: 1.0625rem; /* 17 */
+  --text-title--line-height: 1.375rem;
+  --text-title--letter-spacing: -0.005em;
+
+  --text-body: 1rem; /* 16 */
+  --text-body--line-height: 1.375rem;
+
+  --text-sub: 0.875rem; /* 14 */
+  --text-sub--line-height: 1.1875rem;
+
+  --text-caption: 0.8125rem; /* 13 */
+  --text-caption--line-height: 1.0625rem;
 }
 
 :root {
-  /* Native controls and scrollbars follow the committed dark ground. */
   color-scheme: dark;
 }
 
+/**
+ * The quiz ground.
+ *
+ * Layer order matches the Figma stack: the blurred texture sits underneath, the
+ * translucent gradient dims it from above. The blur is baked into the asset rather
+ * than applied with `filter`, which keeps it off the compositor on mobile and takes
+ * the texture from 6.7 MB to 3 KB.
+ */
+@utility quiz-ground {
+  background-color: var(--color-ground-top);
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(18 8 11 / 0.52) 0%,
+      rgb(46 15 6 / 0.34) 42%,
+      rgb(14 9 6 / 0.8) 100%
+    ),
+    url('/bg/quiz-field.webp');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover, cover;
+}
+
+/** The welcome screen sits on a warmer, more saturated variant of the same idea. */
+@utility quiz-ground-molten {
+  background-color: var(--color-ground-top);
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(18 8 11 / 0.42) 0%,
+      rgb(46 15 6 / 0.26) 38%,
+      rgb(14 9 6 / 0.86) 100%
+    ),
+    url('/bg/molten.webp');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover, cover;
+}
+
+/**
+ * A glass surface — the four layers the design composes for every card, pill and
+ * field. Kept as one utility so the recipe lives in a single place rather than being
+ * re-derived, slightly differently, on each component.
+ */
+@utility glass {
+  background-image: linear-gradient(to bottom, var(--color-glass-top), var(--color-glass-bottom));
+  /* The frames carry Figma's native `GLASS` effect, which is a backdrop material rather
+     than a flat white film. `backdrop-filter` is the closest CSS equivalent; without it
+     the surface reads milky instead of translucent. */
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1.1px solid var(--color-glass-hairline);
+  box-shadow:
+    var(--shadow-glass),
+    inset 0 1px 2px rgb(255 255 255 / 0.34);
+}
+
+/** The flatter, quieter glass used for pills and secondary chrome. */
+@utility glass-quiet {
+  background-color: var(--color-glass-flat);
+  border: 0.6px solid var(--color-glass-hairline);
+  box-shadow: inset 0 1px 2px rgb(255 255 255 / 0.22);
+}
+
 body {
-  background-color: var(--color-background);
+  background-color: var(--color-ground-top);
   color: var(--color-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

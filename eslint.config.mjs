@@ -20,7 +20,14 @@ const eslintConfig = defineConfig([
       'unused-imports/no-unused-imports': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'warn',
-        { args: 'after-used', ignoreRestSiblings: false, argsIgnorePattern: '^_.*?$' },
+        {
+          args: 'after-used',
+          ignoreRestSiblings: false,
+          argsIgnorePattern: '^_.*?$',
+          // Destructuring to drop a key is the idiomatic way to omit one; the discarded
+          // binding is the point, so it should not read as dead code.
+          varsIgnorePattern: '^_.*?$',
+        },
       ],
 
       // Type imports first, then a blank line, then value imports by distance.
