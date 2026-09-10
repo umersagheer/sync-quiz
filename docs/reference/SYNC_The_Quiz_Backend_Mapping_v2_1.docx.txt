@@ -1,0 +1,651 @@
+﻿SYNC
+The Quiz — Backend Mapping v2.1
+The engine resolution layer for The Quiz — FINAL v2.1. Every path a customer can take, resolved to a definite product. Zero open items.
+US market · FDA / 503A · claims stated associatively, not as therapeutic outcomes. GLP-1 medications are standalone 503A only and never blended.
+
+
+SOURCE OF TRUTH
+	This document: The Quiz — Backend Mapping v2.1 (17 Aug 2026)
+	Paired with: The Quiz — FINAL v2.1
+	Authority: FINAL v2.1 is source of truth for all customer-facing copy, screens, result mapping, trigger outcomes, and read logic.
+	Where FINAL and Backend Mapping diverge, FINAL wins automatically.
+	
+
+SIGN-OFF STATUS
+	All clinical logic locked. No open items requiring Reid review before build.
+	Ready for Zarar handoff.
+	
+
+Change log — v1 → v2.1
+1. §2: R7 (adjunct-blend dedup) and R8 (cross-lane secondary defaults) added. Closes the whole collision class.
+2. §2A: R7 substitution table locked — every substitute is clinically defensible and non-mechanism-duplicative.
+3. §3 Lane C: tiebreaker locked — subcutaneous → AOD-9604; visceral → Tesamorelin; metabolic_slowdown → MOTS-c.
+4. §3 Lane C: glp1_active row produces continuation single (Semaglutide or Tirzepatide), matched to customer's script at intake.
+5. §3 Lane D: cellular_energy alone → NAD+ single.
+6. §4 pairs-well-with: inherits from FINAL §10.3 D — PERFORM = MOTS-c, DEFINE = BPC-157. All locked.
+7. §7: 18-path test matrix — every path shows inputs, rules fired, and actual output. Collision/orphan scan clean.
+8. BPC-157 removed from Skin & Longevity singles list in FINAL §10.1 — Recovery molecule, correctly placed in REPAIR blend + R8 REPAIR default.
+
+
+1 · Variables
+Every answer mapped to the variable it sets. Multi-select noted.
+Screen
+	Question / group
+	Answer
+	Engine variable (→)
+	S3
+	Goal (sets lane)
+	Recover from injury, training, or gut issues
+	lane=REPAIR
+	S3
+	Goal (sets lane)
+	Perform, build, and recover harder
+	lane=PERFORM
+	S3
+	Goal (sets lane)
+	Change my body composition
+	lane=DEFINE
+	S3
+	Goal (sets lane)
+	Age slower — skin, energy, longevity
+	lane=RESTORE
+	S3
+	Goal (sets lane)
+	Sex drive and arousal
+	lane=PT-141
+	S4
+	Depth
+	One clear thing
+	depth_single
+	S4
+	Depth
+	A few related things
+	depth_layered
+	S4
+	The mix (cross-lane)
+	[4 goals not chosen as primary]
+	secondary_lane[]
+	S5
+	Recovery discriminator
+	Injury that hasn't healed
+	localised_soft_tissue
+	S5
+	Recovery discriminator
+	Gut — bloating, reactivity
+	gut_mucosal
+	S5
+	Recovery discriminator
+	Skin / small stuff, slow to heal
+	connective_skin
+	S5
+	Recovery discriminator
+	All of it — don't repair like I did
+	systemic_multisite
+	S5
+	Recovery qualifier
+	Yes / Comes & goes / Wear-and-tear
+	inflammatory_active | intermittent | mechanical
+	S5
+	Performance discriminator
+	Need two extra days to recover
+	recovery_lag
+	S5
+	Performance discriminator
+	Results stopped showing
+	body_comp_stall
+	S5
+	Performance discriminator
+	Sleep, still wake unrested
+	sleep_gh
+	S5
+	Performance discriminator
+	Had another gear, it's gone
+	multidomain_decline
+	S5
+	Performance qualifier
+	Light / Moderate / High / Elite
+	load_light|moderate|high|elite
+	S5
+	Metabolic discriminator
+	Soft — grab a handful
+	subcutaneous
+	S5
+	Metabolic discriminator
+	Firm and deep, sits tight
+	visceral
+	S5
+	Metabolic discriminator
+	Both, depending where
+	mixed
+	S5
+	Metabolic discriminator
+	Metabolism switched off
+	metabolic_slowdown
+	S5
+	Metabolic qualifier (GLP-1)
+	Never / On one now / Stopped & regained
+	glp1_naive | active | rebound
+	S5
+	Skin discriminator
+	Skin stopped looking like mine
+	skin_visible
+	S5
+	Skin discriminator
+	Sleep settings scrambled
+	circadian
+	S5
+	Skin discriminator
+	Energy isn't there
+	cellular_energy
+	S5
+	Skin discriminator
+	All of it, crept up fast
+	broad_healthspan
+	S5
+	Skin qualifier
+	Solid / Broken / Shifted / Fine
+	rhythm_solid|broken|shifted|fine
+	S5
+	Hormonal (PT-141)
+	Desire / Arousal / Both
+	desire | arousal | both
+	S6
+	Sleep
+	Under 5 / 5-6 / 6-7 / 7-8 / 8+
+	sleep_hours
+	S6
+	Stress
+	Steady / Managing / Stretched thin / Running on empty
+	stress_level
+	S6
+	Sex assigned at birth
+	Female / Male / Self-describe
+	sex_at_birth
+	S2
+	Name
+	[first-name field]
+	first_name
+	S8
+	90-day goal
+	[free text]
+	ninety_day_goal_text + timestamp
+	S9
+	Email
+	[email field]
+	email
+	
+
+2 · Engine rules
+Eight global rules enforced above every lane. All locked.
+#
+	Rule
+	Definition
+	R1
+	Lane assignment
+	Screen 3 goal sets the lane; the lane sets the base. Metabolic→DEFINE · Recovery→REPAIR · Performance→PERFORM · Skin/longevity→RESTORE · Sex drive→PT-141.
+	R2
+	Depth read
+	Read from TWO signals together: Screen 4 (depth_single / depth_layered) PLUS Screen 5 discriminator boxes checked in the lane. 1 box reads shallow; 2+ reads layered. Depth flips via the per-lane trigger.
+	R3
+	One blend max
+	At MOST ONE advanced blend, ever. Anything else is a single. Engine may push a blend + a single, never advanced + advanced.
+	R4
+	Cross-lane single
+	Each cross-lane secondary can bolt on ONE single from that lane — never a blend. Selection of WHICH single = R8 default.
+	R5
+	Primary wins
+	Shallow primary, deeper secondary: primary always wins. Chosen goal gets the blend or single it earns; secondary caps at a single.
+	R6
+	Hormonal single-only
+	PT-141 returns a single only (blend is phase 2). No depth read.
+	R7
+	Adjunct-blend dedup
+	If a cross-lane single OR pairs-well-with molecule is already inside the primary blend's components, substitute per §2A table. If no substitute exists, drop the adjunct and show the blend solo.
+	R8
+	Cross-lane secondary defaults
+	When a secondary lane is flagged but its discriminators don't fire, the engine bolts on that lane's designated default single. Defaults: REPAIR→BPC-157 · PERFORM→Sermorelin · DEFINE→MOTS-c · RESTORE→NAD+ · PT-141→PT-141. Then R7 dedup runs on the pair.
+	
+
+2A · R7 substitution table (locked)
+Every collision handled. Every substitute clinically defensible.
+Primary blend
+	Blend components
+	Would-be adjunct/pair
+	Substitute (locked)
+	REPAIR
+	BPC-157 · TB-500 · KPV · GHK-Cu
+	BPC-157 (from R8 REPAIR default)
+	Substitute → TB-500 single (same recovery lane, different mechanism from BPC-157).
+	REPAIR
+	BPC-157 · TB-500 · KPV · GHK-Cu
+	NAD+ (from RESTORE default OR pairs-well-with)
+	No collision. NAD+ not in REPAIR blend. Fires clean.
+	PERFORM
+	CJC-1295 · Ipamorelin
+	Sermorelin (from R8 PERFORM default OR pairs-well-with)
+	Same-class GHRH analogue. Substitute → MOTS-c single (mitochondrial, non-GHRH — different mechanism).
+	DEFINE
+	AOD-9604 · MOTS-c · Tesamorelin
+	MOTS-c (from R8 DEFINE default OR pairs-well-with)
+	Substitute → BPC-157 single (gut adjunct, non-metabolic mechanism).
+	DEFINE
+	AOD-9604 · MOTS-c · Tesamorelin
+	AOD-9604 or Tesamorelin (from Lane C single)
+	N/A — customer got single not blend. R7 fires only on blend + adjunct combinations.
+	RESTORE
+	GHK-Cu · Epitalon
+	GHK-Cu (from R8 RESTORE default)
+	Substitute → NAD+ single (same longevity lane, different mechanism).
+	RESTORE
+	GHK-Cu · Epitalon
+	NAD+ (from cellular_energy trigger OR pairs-well-with)
+	No collision. NAD+ not in RESTORE blend. Fires clean.
+	
+
+3 · Lane triggers — single vs blend
+Core resolution. One block per lane. Every combination resolved to a definite base result.
+
+
+LANE A — RECOVERY (goal = Recover)
+BLEND = REPAIR (BPC-157 · TB-500 · KPV · GHK-Cu) · SINGLE = BPC-157
+Discriminator boxes
+	Inflammation qualifier
+	Depth read
+	Trigger condition
+	BASE RESULT
+	1 box (any)
+	mechanical
+	shallow
+	1 box + mechanical
+	BPC-157 single
+	1 box (any)
+	intermittent
+	shallow
+	not single-path → escalates
+	REPAIR blend
+	1 box (any)
+	active
+	any
+	inflammatory_active
+	REPAIR blend
+	2+ boxes
+	any
+	layered
+	2+ boxes
+	REPAIR blend
+	systemic_multisite (any count)
+	any
+	any
+	systemic_multisite
+	REPAIR blend
+	
+
+LANE B — PERFORMANCE (goal = Perform)
+BLEND = PERFORM (CJC-1295 + Ipamorelin) · SINGLE = Sermorelin
+Discriminator boxes
+	Training load
+	Depth read
+	Trigger condition
+	BASE RESULT
+	recovery_lag alone (1 box)
+	light/moderate/high
+	shallow
+	recovery_lag alone
+	Sermorelin single
+	recovery_lag alone (1 box)
+	elite
+	any
+	elite load
+	PERFORM blend
+	multidomain_decline (any count)
+	any
+	any
+	multidomain_decline
+	PERFORM blend
+	2+ boxes
+	any
+	layered
+	2+ boxes
+	PERFORM blend
+	single box ≠ recovery_lag
+	any
+	shallow
+	no single-path defined
+	PERFORM blend
+	
+
+LANE C — METABOLIC / BODY COMP (tiebreaker locked)
+BLEND = DEFINE (AOD-9604 · MOTS-c · Tesamorelin) · SINGLES = AOD-9604, MOTS-c, Tesamorelin, Semaglutide, Tirzepatide
+Fat pattern
+	GLP-1 qualifier
+	Depth read
+	Trigger condition
+	BASE RESULT
+	subcutaneous alone
+	glp1_naive
+	shallow
+	subcutaneous + naive
+	AOD-9604 single
+	visceral alone
+	glp1_naive
+	shallow
+	visceral + naive
+	Tesamorelin single
+	metabolic_slowdown alone
+	glp1_naive
+	shallow
+	metabolic_slowdown + naive
+	MOTS-c single
+	mixed
+	any
+	any
+	mixed pattern
+	DEFINE blend
+	2+ discriminator boxes
+	any
+	layered
+	2+ boxes
+	DEFINE blend
+	any pattern
+	glp1_rebound
+	any
+	glp1_rebound
+	DEFINE blend
+	any pattern
+	glp1_active
+	n/a
+	glp1_active
+	Semaglutide OR Tirzepatide continuation single (matched at intake)
+	
+
+LANE D — SKIN & LONGEVITY
+BLEND = RESTORE (GHK-Cu · Epitalon) · SINGLES = GHK-Cu, NAD+
+Discriminator boxes
+	Sleep-rhythm qualifier
+	Depth read
+	Trigger condition
+	BASE RESULT
+	skin_visible alone (1 box)
+	any
+	shallow
+	skin_visible alone
+	GHK-Cu single
+	cellular_energy alone (1 box)
+	any
+	shallow
+	cellular_energy alone
+	NAD+ single
+	circadian alone (1 box)
+	any
+	shallow
+	no single-path → escalates
+	RESTORE blend
+	broad_healthspan (any count)
+	any
+	any
+	broad_healthspan
+	RESTORE blend
+	2+ boxes
+	any
+	layered
+	2+ boxes
+	RESTORE blend
+	
+
+Clinical note: GHK-Cu strongest topical, thinner injectable/systemic; Epitalon largely preliminary. Read and reveal copy carries lower confidence than metabolic — associative language only.
+
+
+LANE E — HORMONAL (goal = Sex drive and arousal)
+BLEND = — (phase 2) · SINGLE = PT-141
+Discriminator
+	Qualifier
+	Depth read
+	Trigger condition
+	BASE RESULT
+	desire / arousal / both
+	none
+	n/a
+	always single
+	PT-141 single
+	
+
+4 · Result assembly
+How primary-lane result and cross-lane secondary combine into the final stack — four shapes.
+Shape
+	Primary lane returns
+	Secondary lane
+	Assembled result → reveal
+	1
+	Single (shallow, focused primary)
+	none flagged
+	ONE SINGLE. Recommend-less reveal: read, base card, cycle-2 line. NO pairs-well-with.
+	2
+	Advanced blend (deep primary)
+	none flagged
+	ONE BLEND. Full PDP reveal: read, base card, plan selector, pairs-well-with per §4A (R7 dedup applied).
+	3
+	Advanced blend (deep primary)
+	one distinct lane flagged
+	BLEND + ONE SINGLE. Base card + supporting protocol card. Cross-lane single = R8 default, R7 dedup applied. No pairs-well-with.
+	4
+	Single (shallow primary)
+	one distinct lane flagged
+	TWO SINGLES. Base card + supporting protocol card. Cross-lane single = R8 default, R7 dedup applied.
+	
+
+4A · Pairs-well-with map (inherits from FINAL v2.1 §10.3 D)
+One curated single per base, shown ONLY on solo-base reveals (shape 2). R7 dedup enforced.
+Base
+	Pairs well with
+	Why
+	REPAIR
+	NAD+
+	Recovery leans on cellular energy — NAD+ is the natural pair. Not in REPAIR blend.
+	PERFORM
+	MOTS-c
+	Mitochondrial output alongside the GH pulse — different mechanism from CJC/Ipa in blend, non-overlapping. Not in PERFORM blend.
+	DEFINE
+	BPC-157
+	Gut adjunct alongside metabolic work — meaningful for GLP-1 rebound and metabolic-slowdown customers. Not in DEFINE blend.
+	RESTORE
+	NAD+
+	Longevity + cellular energy sit together — NAD+ is the natural companion. Not in RESTORE blend.
+	
+
+5 · The read — Screen 7
+Sharp pairings checked first; if none fire, lane-level fallback for primary goal fires. Every customer gets exactly one read. All stated associatively.
+Fires when
+	Priority
+	Read line (associative)
+	Body comp goal + sleep <7 hrs
+	SHARP
+	GH-in-deep-sleep pairing: short sleep works against the composition change.
+	Visceral fat + high stress
+	SHARP
+	Cortisol / deep-abdominal-fat association.
+	Systemic recovery + sleep <7 hrs
+	SHARP
+	Shared overnight repair window.
+	Flat energy + high stress
+	SHARP
+	Sustained stress associated with cellular energy drop.
+	Sex drive + high stress
+	SHARP
+	Desire/arousal influenced by stress load.
+	Recovery — no sharp
+	FALLBACK
+	One-tissue-vs-whole-system distinction.
+	Performance — no sharp
+	FALLBACK
+	Train-harder vs system-driving-recovery-has-shifted.
+	Metabolic — no sharp
+	FALLBACK
+	Where fat sits vs how metabolism behaves.
+	Skin & longevity — no sharp
+	FALLBACK
+	Skin/sleep/energy on overlapping clocks.
+	Hormonal — no sharp
+	FALLBACK
+	Desire vs arousal have different drivers.
+	
+
+6 · Handoff payload
+Every field passed by token into the clinical intake. Intake re-asks none of it.
+Field
+	Source
+	Notes
+	first_name
+	S2
+	Used lightly through flow + cohort data
+	sex_at_birth
+	S6
+	Clinical accuracy of read + cohort data
+	goal / lane
+	S3
+	Sets base product
+	depth (primary-lane)
+	S4 + S5 count
+	Feeds single-vs-blend
+	all discriminator checks
+	S5
+	Full multi-select set per lane
+	qualifier
+	S5
+	Lane-specific fork answer
+	cross_lane_secondaries[]
+	S4
+	Flat multi-select, no ranking
+	sleep_hours
+	S6
+	Also feeds read
+	stress_level
+	S6
+	Also feeds read
+	ninety_day_goal_text + timestamp
+	S8
+	Quoted back at week 8
+	email
+	S9
+	Gates reveal
+	assembled_stack
+	engine
+	Base + any single, resolved per §3–4 + R7/R8
+	chosen_plan_length
+	S10
+	1 / 3 / 6 months, defaulted to 3
+	
+
+7 · Test matrix
+Eighteen representative user paths run end-to-end. Each shows inputs, rules fired, and assembled output. Collision/orphan scan follows.
+
+
+#
+	Inputs (S3-S6)
+	Rules fired
+	Assembled output
+	1
+	Recovery / depth_single / gut_mucosal / mechanical / no secondary
+	R1 lane=REPAIR · R2 shallow · Lane A → BPC-157 single · Shape 1
+	BPC-157 single. Recommend-less reveal. No pairs-well-with.
+	2
+	Recovery / depth_layered / gut_mucosal + connective_skin / active / no secondary
+	R1 REPAIR · R2 layered · Lane A → REPAIR blend · Shape 2 · pairs-well-with = NAD+ · R7 check: NAD+ not in blend, fires clean
+	REPAIR blend + pairs-well-with card = NAD+.
+	3
+	Recovery / systemic_multisite / active / RESTORE secondary
+	R1 REPAIR · Lane A → REPAIR blend · R4 secondary · R8 RESTORE default = NAD+ · R7: NAD+ not in REPAIR blend, clean · Shape 3
+	REPAIR blend + NAD+ single. No pairs-well-with.
+	4
+	Performance / recovery_lag alone / high load / no secondary
+	R1 PERFORM · Lane B → Sermorelin single · Shape 1
+	Sermorelin single. Recommend-less reveal.
+	5
+	Performance / multidomain_decline / elite / DEFINE secondary
+	R1 PERFORM · Lane B → PERFORM blend · R4 secondary · R8 DEFINE default = MOTS-c · R7: MOTS-c not in PERFORM blend (CJC/Ipa only), clean · Shape 3
+	PERFORM blend + MOTS-c single. No pairs-well-with.
+	6
+	Performance / recovery_lag alone / moderate / RESTORE secondary
+	R1 PERFORM · Lane B → Sermorelin single · R4 · R8 RESTORE = NAD+ · R7: no collision · Shape 4
+	Sermorelin single + NAD+ single.
+	7
+	Metabolic / subcutaneous / glp1_naive / no secondary
+	R1 DEFINE · Lane C → AOD-9604 single · Shape 1
+	AOD-9604 single. Recommend-less reveal.
+	8
+	Metabolic / visceral / glp1_naive / no secondary
+	R1 DEFINE · Lane C → Tesamorelin single · Shape 1
+	Tesamorelin single. Recommend-less reveal.
+	9
+	Metabolic / metabolic_slowdown / glp1_naive / no secondary
+	R1 DEFINE · Lane C → MOTS-c single · Shape 1
+	MOTS-c single. Recommend-less reveal.
+	10
+	Metabolic / mixed / glp1_naive / RESTORE secondary
+	R1 DEFINE · Lane C → DEFINE blend · R4 · R8 RESTORE = NAD+ · R7: NAD+ not in DEFINE blend, clean · Shape 3
+	DEFINE blend + NAD+ single. No pairs-well-with.
+	11
+	Metabolic / any / glp1_active / no secondary
+	R1 DEFINE · Lane C → continuation single (Semaglutide OR Tirzepatide, matched at intake) · Shape 1
+	Continuation single reveal. Customer sees current GLP-1 as maintenance + upgrade path via clinician.
+	12
+	Metabolic / any / glp1_rebound / no secondary
+	R1 DEFINE · Lane C → DEFINE blend · Shape 2 · pairs-well-with = BPC-157 · R7: BPC-157 not in DEFINE blend, clean
+	DEFINE blend + pairs-well-with card = BPC-157.
+	13
+	Skin & Longevity / skin_visible alone / no secondary
+	R1 RESTORE · Lane D → GHK-Cu single · Shape 1
+	GHK-Cu single. Recommend-less reveal.
+	14
+	Skin & Longevity / cellular_energy alone / no secondary
+	R1 RESTORE · Lane D → NAD+ single · Shape 1
+	NAD+ single. Recommend-less reveal.
+	15
+	Skin & Longevity / broad_healthspan / DEFINE secondary
+	R1 RESTORE · Lane D → RESTORE blend · R4 · R8 DEFINE = MOTS-c · R7: MOTS-c not in RESTORE blend (GHK-Cu/Epitalon only), clean · Shape 3
+	RESTORE blend + MOTS-c single. No pairs-well-with.
+	16
+	Skin & Longevity / broad_healthspan / no secondary
+	R1 RESTORE · Lane D → RESTORE blend · Shape 2 · pairs-well-with = NAD+ · R7: NAD+ not in RESTORE blend, clean
+	RESTORE blend + pairs-well-with card = NAD+.
+	17
+	Sex drive / desire / no secondary
+	R1 PT-141 · Lane E → PT-141 single · R6 single-only · Shape 1
+	PT-141 single. Recommend-less reveal.
+	18
+	Sex drive / arousal / PERFORM secondary
+	R1 PT-141 · Lane E → PT-141 single · R4 · R8 PERFORM = Sermorelin · R7: no collision with PT-141 · Shape 4
+	PT-141 single + Sermorelin single.
+	
+
+7A · Scan results
+Duplicate check:
+* No duplicate molecules across any of the 18 assembled outputs. R7 dedup rule tested on paths 2, 3, 5, 10, 15, 16 — all clean.
+
+
+Mechanism check:
+* No mechanism-duplicative combinations. PERFORM blend + MOTS-c (path 5, 15) confirmed non-overlapping (GHRH/GHRP vs mitochondrial). No same-class stacking anywhere.
+
+
+Empty-path check:
+* Every path resolves to a definite output. glp1_active (path 11) produces continuation single. No empty reveals.
+
+
+Undefined-tiebreaker check:
+* Lane C tiebreaker resolved (subcutaneous → AOD-9604; visceral → Tesamorelin; metabolic_slowdown → MOTS-c). Cross-lane single selection resolved via R8 defaults. No remaining undefined tiebreakers.
+
+
+Orphan check:
+* Semaglutide, Tirzepatide — produced by Lane C glp1_active path. Not orphaned.
+* NAD+ — produced by Lane D cellular_energy alone AND R8 RESTORE default AND pairs-well-with. Not orphaned.
+* Tesamorelin — produced by Lane C visceral + glp1_naive. Not orphaned.
+* AOD-9604 — produced by Lane C subcutaneous + glp1_naive. Not orphaned.
+* BPC-157 — produced by Lane A (single and blend) AND R8 REPAIR default AND DEFINE pairs-well-with. Not orphaned. Removed from Skin & Longevity singles list in FINAL §10.1 (was a v1 leftover; molecule is Recovery-lane, not Skin).
+* Zero orphans remain.
+
+
+Sign-off status
+Every clinical decision locked. Zero open items for Reid before build.
+Ready for Zarar handoff.
+
+
+The quiz is guidance. The intake is qualification. Backend v2.1 — signed off for build.

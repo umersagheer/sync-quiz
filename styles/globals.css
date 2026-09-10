@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+/**
+ * Design tokens.
+ *
+ * PLACEHOLDER VALUES. The Figma file (kxBzmwCi8NCZR69YeybQOm) could not be read
+ * when this was written — the View seat had hit its MCP tool-call limit. Names,
+ * roles and structure are settled; every value marked PLACEHOLDER is a stand-in
+ * approximating the "Apple Liquid Glass" deep-maroon direction and must be swept
+ * against `get_variable_defs` on node 1:772 before the reveal is built.
+ *
+ * The quiz commits to one visual world rather than following the OS theme: the
+ * reveal deliberately opens on a dark maroon band and fades to cream protocol
+ * cards *within the same page*, so dark and light are two surfaces here, not two
+ * themes. `background`/`surface` are the maroon side; `card` is the cream side.
+ */
+@theme {
+  /* Ground and text — the maroon side */
+  --color-background: #2a0e14; /* PLACEHOLDER */
+  --color-foreground: #f5ede6; /* PLACEHOLDER */
+  --color-muted-foreground: #c3a9a4; /* PLACEHOLDER */
+
+  /* Raised surfaces on the maroon ground */
+  --color-surface: #3a161e; /* PLACEHOLDER */
+  --color-surface-muted: #4a1f28; /* PLACEHOLDER */
+
+  /* The cream side — protocol cards in the reveal */
+  --color-card: #f5efe7; /* PLACEHOLDER */
+  --color-card-foreground: #2a0e14; /* PLACEHOLDER */
+  --color-card-muted-foreground: #6b5750; /* PLACEHOLDER */
+
+  /* Liquid Glass — translucent panels over the gradient */
+  --color-glass: rgb(255 255 255 / 8%); /* PLACEHOLDER */
+  --color-glass-strong: rgb(255 255 255 / 14%); /* PLACEHOLDER */
+  --color-glass-border: rgb(255 255 255 / 16%); /* PLACEHOLDER */
+
+  /* Action */
+  --color-primary: #8e2436; /* PLACEHOLDER */
+  --color-primary-foreground: #fff8f3; /* PLACEHOLDER */
+  --color-accent: #d9a05b; /* PLACEHOLDER */
+
+  /* Lines and focus */
+  --color-border: rgb(255 255 255 / 12%); /* PLACEHOLDER */
+  --color-border-strong: rgb(255 255 255 / 24%); /* PLACEHOLDER */
+  --color-ring: #d9a05b; /* PLACEHOLDER */
+
+  /* Radii */
+  --radius-control: 0.75rem; /* PLACEHOLDER */
+  --radius-card: 1.25rem; /* PLACEHOLDER */
+  --radius-pill: 9999px;
+
+  /* Type. Size scale stays on Tailwind's default until Figma gives real values —
+     inventing a scale now would be a number to unlearn later. */
+  --font-sans: var(--font-app-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  /* Native controls and scrollbars follow the committed dark ground. */
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}

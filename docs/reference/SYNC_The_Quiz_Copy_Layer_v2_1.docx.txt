@@ -1,0 +1,342 @@
+﻿SYNC  ·  THE QUIZ  ·  COPY LAYER v2.1
+SYNC HEALTH
+The Quiz — Copy Layer
+v2.1 · customer-facing copy + education layer + reveal PDP
+
+
+What this is
+The customer-facing copy layer for the SYNC quiz. Sits on top of the Backend Mapping v2.1 engine spec — every trigger, every rule (R1–R8), every substitution unchanged. This document changes only what the customer sees and how the reveal is laid out.
+What changed against FINAL v2.1
+Voice: hybrid register applied deliberately. Direct on questions, options, and reveal decision copy — that's where the customer is doing work or making a choice, and directness converts. Warm on the opener, interstitials, the read, and the recommend-less reveal — those are emotional beats where warmth earns its place. The "that's not X, it's Y" construction is retired throughout — warmth without the formula.
+Education: five education screens added, one per branch, sitting between the discriminator and the cross-signal questions. Plain-language biology, no product mention, no sell. Signposted with grey callout boxes.
+Recognition lines: added after specific branch answers where a real clinical pattern fires. Red-bar callouts. Fire on the same screen as the answer, not as their own screen.
+Reveal (Screen 10): rebuilt as a PDP-style page. Base card with 4 benefit chips + 3-line paragraph + price. Supporting protocol card same shape when adjunct fires. Plan selector defaulted to 3 months with clinical framing line locked. Sticky footer with running total + primary CTA visible throughout scroll.
+What did not change
+The engine. Every trigger, every rule, every routing decision, every result assembly — all inherited from Backend Mapping v2.1. Zarar builds engine logic against that doc. This doc governs the words and the reveal layout.
+How to read
+Customer copy is larger and indented. Grey italic notes are build instructions. Red-bar callouts are recognition lines (same-screen). Grey box callouts are education screens (own screen after branch).
+________________
+
+
+SECTION 1  ·  WHO YOU ARE
+SCREEN 1  ·  WELCOME  ·  WARM
+You've probably already tried the obvious things.
+If you're here, it's because something's not adding up — the effort you're putting in isn't matching what you're getting back. That's worth two minutes.
+We'll ask the questions your GP didn't, then show you what actually fits. If the honest answer is one molecule, that's what you'll get.
+[ Start ]
+Warm — the opener's emotional job is to say "we get it." No consent wall. Eligibility lives in the clinical intake, after they care.
+SCREEN 2  ·  NAME  ·  DIRECT
+What should we call you?
+[ first-name text field ]
+Store as first_name. Used lightly through the flow (Screen 3 welcome, Screen 7 read, Screen 10 reveal).
+SCREEN 3  ·  WELCOME INTERSTITIAL  ·  WARM
+Welcome, [name]. Two minutes — let's see what fits.
+[ Continue ]
+A beat between the ask and the work. Uses the name once. Not a question.
+SCREEN 4  ·  SEX ASSIGNED AT BIRTH  ·  DIRECT
+Sex assigned at birth.
+○  Female
+○  Male
+○  Prefer to self-describe  →  [ free text field ]
+Store as sex_at_birth. Clinical input for the read logic and intake dosing. Direct — no soft framing needed; the customer expects to be asked this.
+________________
+
+
+SECTION 2  ·  YOUR GOALS
+SCREEN 5  ·  PRIMARY GOAL  ·  DIRECT  ·  SINGLE-SELECT
+What's the most important thing you want to focus on first?
+Pick the one that matters most. You'll add the others next.
+○  Recover — from injury, training, or gut issues  →  lane = REPAIR
+○  Perform — build, train, recover harder  →  lane = PERFORM
+○  Change my body composition  →  lane = DEFINE
+○  Age slower — skin, energy, longevity  →  lane = RESTORE
+○  Sex drive and arousal  →  lane = PT-141
+Store as lane. Icons paired with each option — visual anchor. Sets the base per Backend Mapping R1.
+SCREEN 6  ·  DEPTH  ·  DIRECT  ·  SINGLE-SELECT
+Is it one clear thing — or a few things at once?
+Both are common. The answer just changes what we build.
+○  One clear thing  →  depth_single
+○  A few, and they're connected  →  depth_layered
+RECOGNITION LINE — appears immediately after their answer
+Most people arrive with more than one — usually it means the system is under load, not that any one part has failed.
+	Fires on depth_layered. Store as depth. Feeds Backend R2 alongside Screen 7 discriminator box count.
+SCREEN 7  ·  SECONDARY GOALS  ·  DIRECT  ·  MULTI-SELECT, NO RANKING
+Anything else going on?
+Tick anything else you'd want addressed. Anything you pick becomes part of what we build.
+Store as secondary_lane[]. Multi-select of the four goals not chosen at Screen 5. Each feeds Backend R4 (cross-lane single via R8 defaults).
+________________
+
+
+SECTION 3  ·  DISCRIMINATOR BRANCHES + EDUCATION
+Only ONE branch fires per customer, matched to the Screen 5 lane. All discriminator questions multi-select except Body composition (single-select on the pinch test) and PT-141 (single-select qualifier). Box count feeds the per-lane single-vs-blend trigger — see Backend §3. Each branch closes with its own education screen before the customer moves to Screen 9.
+Branch A  ·  Recovery  ·  fires when lane = REPAIR
+DISCRIMINATOR  ·  MULTI-SELECT
+Where's the recovery problem showing up?
+Tick everything that fits. Most people have more than one.
+○  A specific injury or tendon that should've healed by now  →  localised_soft_tissue
+○  Gut — bloating, reactivity, the way food sits  →  gut_mucosal
+○  Skin — small cuts, wear, things heal slowly  →  connective_skin
+○  Everywhere — I don't repair the way I used to  →  systemic_multisite
+RECOGNITION LINE — appears immediately after their answer
+If you ticked gut and something structural — those usually track together. Gut and tissue repair share the same underlying pathway.
+	Fires when gut_mucosal AND (localised_soft_tissue OR systemic_multisite). Alt beat on 2+ other combinations: "Multi-site is the more common presentation, and the more informative one for a clinician." No recognition on single-box.
+QUALIFIER  ·  SINGLE-SELECT
+Is there active inflammation right now?
+Heat, swelling, or a flare that won't settle.
+○  Yes, right now  →  inflammatory_active
+○  Comes and goes  →  inflammatory_intermittent
+○  No — it's more wear-and-tear  →  mechanical
+Trigger LOCKED: 1 box + mechanical → BPC-157 single. 2+ boxes OR systemic_multisite OR inflammatory_active → REPAIR blend. See Backend Lane A.
+EDUCATION SCREEN — its own screen, after branch complete, before the customer moves on
+Why recovery isn't one problem.
+Your gut and your soft tissue heal through the same repair pathway.
+When one is inflamed, the other slows down. That's why gut issues and an injury that won't heal aren't two separate problems in the same body — they're the same process, showing up in different places.
+[ Keep going ]
+	________________
+
+
+Branch B  ·  Performance  ·  fires when lane = PERFORM
+DISCRIMINATOR  ·  MULTI-SELECT
+What's changed in your training or performance?
+Tick everything that's true.
+○  Recovery between sessions — I need more time than I used to  →  recovery_lag
+○  Same effort, worse output — results stopped showing up  →  body_comp_stall
+○  Sleep isn't recovering me the way it should  →  sleep_gh
+○  There used to be another gear — it's gone  →  multidomain_decline
+RECOGNITION LINE — appears immediately after their answer
+Ticking more than one isn't "train harder." It's a shift in the system that drives recovery — and it's the pattern a clinician looks for specifically.
+	Fires on 2+ boxes OR multidomain_decline. Alt beat on single-box recovery_lag: "Recovery lag on its own is the clearest signal to work with — one variable, clean read at 90 days."
+QUALIFIER  ·  SINGLE-SELECT
+How hard are you training right now?
+○  Light  →  load_light
+○  Moderate  →  load_moderate
+○  High  →  load_high
+○  Elite or competitive  →  load_elite
+Trigger LOCKED: recovery_lag alone (sub-elite) → Sermorelin single. multidomain_decline OR 2+ boxes OR elite load → PERFORM blend (CJC+Ipa). See Backend Lane B.
+EDUCATION SCREEN — its own screen, after branch complete, before the customer moves on
+Why "train harder" stops working.
+Growth hormone drives most of your recovery — and from your mid-30s, your body releases less of it. Less recovery signal means the same training leaves you deeper in the hole each time.
+The answer stops being effort. It's the system doing the recovering that's changed.
+[ Keep going ]
+	________________
+
+
+Branch C  ·  Body composition  ·  fires when lane = DEFINE
+DISCRIMINATOR  ·  SINGLE-SELECT  ·  THE PINCH TEST
+Pinch the fat around your middle. What is it?
+This question separates the compounds that work for your kind of fat from the ones that don't.
+○  Soft — I can grab a handful  →  subcutaneous
+○  Firm and deep — sits tight, hard to pinch  →  visceral
+○  Both, depending where  →  mixed
+○  It's not the fat — the whole system feels flat  →  metabolic_slowdown
+RECOGNITION LINE — appears immediately after their answer
+If you got firm and deep — that's visceral fat. It responds to different biology than the soft kind. Same person can carry both. Different treatments.
+	Fires on visceral or mixed. Alt beats — subcutaneous: "Soft fat is the more common presentation and the one most protocols are actually built for." metabolic_slowdown: "That's a systemic read, not a fat read — different lane, different answer." Single-select branch.
+QUALIFIER  ·  SINGLE-SELECT
+Have you used a GLP-1 medication?
+Ozempic, Wegovy, Mounjaro, or compounded semaglutide.
+○  Never  →  glp1_naive
+○  On one now  →  glp1_active
+○  I stopped, and regained  →  glp1_rebound
+Trigger LOCKED per Backend Lane C: subcutaneous + naive → AOD-9604 single. visceral + naive → Tesamorelin single. metabolic_slowdown + naive → MOTS-c single. mixed OR 2+ boxes OR glp1_rebound → DEFINE blend. glp1_active → continuation single (Semaglutide or Tirzepatide, matched at intake).
+EDUCATION SCREEN — its own screen, after branch complete, before the customer moves on
+Why one kind of fat responds and the other doesn't.
+Soft fat — the kind you can pinch — sits under the skin and responds to calorie balance.
+Firm, deep fat sits around your organs and behaves differently. It's driven by stress hormones and how your body handles blood sugar, not by how much you eat.
+Same person can carry both. Different biology. Different levers.
+[ Keep going ]
+	________________
+
+
+Branch D  ·  Skin & longevity  ·  fires when lane = RESTORE
+DISCRIMINATOR  ·  MULTI-SELECT
+What made you first think something had changed?
+Tick anything that fits.
+○  My skin stopped looking like mine  →  skin_visible
+○  Sleep and body clock feel off  →  circadian
+○  The energy I used to take for granted just isn't there  →  cellular_energy
+○  All of it, and it crept up faster than I expected  →  broad_healthspan
+RECOGNITION LINE — appears immediately after their answer
+Skin, sleep and energy look like three separate complaints. They run on overlapping clocks — which is why they usually shift together.
+	Fires on 2+ boxes OR broad_healthspan. Alt beats — skin_visible alone: "Skin-visible on its own is the cleanest presentation to work with — one lane, one signal." cellular_energy alone: "Energy-only is the cleanest read — one system to work with."
+QUALIFIER  ·  SINGLE-SELECT
+How's your sleep rhythm?
+○  Solid — I sleep through and wake rested  →  rhythm_solid
+○  Falls apart at night — I wake up and can't settle  →  rhythm_broken
+○  Off since a shift, travel, or getting older  →  rhythm_shifted
+○  Fine — not my issue  →  rhythm_fine
+Trigger LOCKED per Backend Lane D: skin_visible alone → GHK-Cu single. cellular_energy alone → NAD+ single. broad_healthspan OR 2+ boxes → RESTORE blend. circadian alone → RESTORE blend. Reid clinical note: RESTORE reveal copy carries lower confidence than DEFINE — associative language only.
+EDUCATION SCREEN — its own screen, after branch complete, before the customer moves on
+Why skin, sleep and energy shift together.
+They run on the same internal clock. When your body's repair rhythm slows, skin turnover slows with it — texture, tone, how fast wear heals.
+That's why the person whose sleep drops usually notices their skin next, then their energy. They shift together because they run on the same signal.
+[ Keep going ]
+	________________
+
+
+Branch E  ·  Sex drive and arousal  ·  fires when lane = PT-141
+SINGLE-SELECT  ·  QUALIFIER ONLY, NO DISCRIMINATOR
+What's actually changed for you?
+Desire and arousal have different drivers. It matters which one shifted.
+○  The desire itself — the wanting isn't there  →  desire
+○  Response is lagging behind the interest  →  arousal
+○  Both  →  both
+RECOGNITION LINE — appears immediately after their answer
+Desire and arousal have different drivers. Most people are never asked to separate them — that distinction is the read.
+	Single-select. No advanced blend at launch (PT-141 only, blend is phase 2). No depth read — this lane returns a single always per Backend R6.
+EDUCATION SCREEN — its own screen, after branch complete, before the customer moves on
+Why desire and response are two different things.
+Desire is a signal from the brain — the wanting.
+Response is what the body does with it — blood flow, hormones, physical readiness.
+They can shift independently. And they respond to different treatments.
+[ Keep going ]
+	________________
+
+
+SECTION 4  ·  CROSS-SIGNALS + CAPTURE
+Asked of every customer regardless of lane. Sleep and stress feed the read that opens Screen 10. Then the 90-day capture, then email gates the reveal.
+SCREEN 8A  ·  SLEEP  ·  DIRECT
+How many hours are you actually sleeping most nights?
+○  Under 5  →  sleep_under_5
+○  5 to 6  →  sleep_5_6
+○  6 to 7  →  sleep_6_7
+○  7 to 8  →  sleep_7_8
+○  8 or more  →  sleep_8_plus
+Store as sleep_hours. Feeds the read.
+SCREEN 8B  ·  STRESS  ·  WARM-ADJACENT
+How have the last few months felt?
+Work, life, whatever's been going on — the honest version.
+○  Steady — nothing out of the ordinary  →  stress_steady
+○  Managing, but there's a lot on  →  stress_managing
+○  Stretched thin — running above what feels sustainable  →  stress_stretched
+○  Running on empty — no reserves left  →  stress_empty
+Store as stress_level. Feeds the read.
+SCREEN 8C  ·  90-DAY CAPTURE  ·  WARM  ·  FREE TEXT
+90 days from now — what's different?
+Your words. This is the line your clinician reads back at day 90 to check what actually moved.
+[ free text  ·  placeholder: "In 90 days I want to…" ]
+Store as ninety_day_goal_text + timestamp. Reorder trigger — quoted back at week 8.
+SCREEN 9  ·  EMAIL  ·  DIRECT  ·  GATES THE REVEAL
+Where should we send your personalised protocol?
+Your read and your assembled stack — then you'll move into the clinical assessment with a licensed provider. You won't be asked any of this twice.
+[ email field ]
+[ Show me my personalised protocol ]
+Store as email. Server-side / CAPI tracking from this event onward. No health-adjacent parameters to ad platforms.
+________________
+
+
+SECTION 5  ·  THE REVEAL (SCREEN 10)
+The most important screen in the entire build. A full PDP-style page. Everything before this screen is trust-building; this screen is where the customer converts. Read the structure carefully — sticky footer, plan selector default, benefit chip layout, running total — every element specified.
+Structure  ·  top to bottom
+1. The read (opens the page — warm register)
+2. Base card (compound + 4 benefit chips + 3-line paragraph + price)
+3. Supporting protocol card (only when engine adds an adjunct — same format)
+4. Plan selector (1/3/6 months, defaulted to 3, with clinical framing line locked)
+5. Day-90 review line
+6. "Pairs well with" card (only when base is solo — no adjunct already added)
+7. Controls (swap, remove, start over)
+8. Sticky footer (always visible during scroll — running total + primary CTA)
+5.1  ·  The read  ·  warm  ·  opens the page
+Here's what we see, [name].
+One of 10 read variants fires based on primary lane × cross-signal. Sharp pairings evaluated first per Backend §5; if none fire, the lane fallback fires. Every customer gets exactly one read. Warm register — this is the emotional beat before commerce.
+Sharp pairings  ·  fire when the cross-signal is there
+Body composition + under 7 hrs sleep
+You want your body to change — and you're sleeping under seven hours. Most of your growth hormone releases in deep sleep, which means short sleep quietly works against the change you're putting effort into. It's the same pattern in most people who plateau despite doing the work.
+Visceral fat + high stress
+Firm, deep fat around your middle — and the last few months running on empty. Those track together more often than most people are told. Sustained stress drives your body to store fat there specifically. It's the fat pattern that responds to your nervous system, not your fork.
+Systemic recovery + under 7 hrs sleep
+You don't bounce back the way you used to, and you're under-sleeping. Both of those run on the same overnight window. If sleep is short, recovery can't complete — and if recovery can't complete, the next day starts already behind.
+Flat energy + high stress
+Flat energy and months of running on empty. Your body burns through its cellular energy reserves faster under sustained stress than under almost anything else. The tiredness has a biology behind it, not a scheduling problem.
+Sex drive + high stress
+Your sex drive has shifted — and the last few months have been heavy. Those two are more connected than most people are ever told. Desire is one of the first things to drop when the system is under sustained load.
+Lane fallbacks  ·  fire when no sharp pairing does
+Recovery
+You told us where it's showing up and how long it's been going on. Whether the problem is one tissue or the whole system is the distinction a clinician uses to decide what to actually target. You just gave us the answer.
+Performance
+What you flagged separates "needs to train harder" from "the system that recovers you has shifted." A clinician reads those two together, not one at a time.
+Metabolic
+Where the fat sits and how your metabolism behaves are two different mechanisms. You told us which one is yours — and that's the distinction most plans skip.
+Skin & longevity
+Skin, sleep and energy look like three separate complaints. They run on the same internal clock — and you told us which one is loudest.
+Sex drive
+Desire and response come from different systems. You told us which one shifted — that's the whole read, and one most people are never asked to make.
+________________
+
+
+5.2  ·  Base card  ·  direct
+Every reveal shows one base card. Contains: 4 benefit chips (icon + short label), compound name, 3-line paragraph tying the compound to the customer's specific answers, price for the base at the currently-selected plan length.
+Format
+Your base  —  [ Molecule or blend name ]
+[ 4 benefit chips  ·  icon + 2-3 word label per chip ]
+[ 3-line paragraph — echoes their answer, names why this compound fits, closes ]
+From $X/month
+Worked example  ·  REPAIR base
+Your base  —  REPAIR
+[ 🧬 Systemic repair  ·  🔥 Targets inflammation  ·  💊 Supports gut lining  ·  ⚙️ Rebuilds connective tissue ]
+You told us the recovery is showing up in your gut and something structural. REPAIR is built for exactly that pattern — four compounds working on the shared repair system, not one tissue at a time.
+From $X/month
+Amelia to write the remaining 4 base paragraphs (PERFORM, DEFINE, RESTORE, PT-141) and the 4 benefit chips per compound. Also each of the single-only bases: BPC-157, Sermorelin, AOD-9604, Tesamorelin, MOTS-c, NAD+, GHK-Cu, continuation Semaglutide/Tirzepatide. Copy backlog — request in parallel with build.
+5.3  ·  Supporting protocol card  ·  direct  ·  only when engine adds an adjunct
+Identical format to base card. Fires only when Backend R4 resolves a cross-lane secondary into a single. Never a blend (R3). R7 dedup enforced.
+Worked example  ·  NAD+ as supporting protocol alongside REPAIR
+Supporting protocol  —  NAD+
+[ ⚡ Cellular energy  ·  🧬 Mitochondrial function  ·  🔄 Recovery signalling  ·  🕐 Anti-fatigue ]
+You also flagged energy — that's a separate system, running low. NAD+ powers the fuel your cells run on. Paired with REPAIR, it means the repair machinery has something to work with.
+From $X/month
+Copy per supporting protocol pairing to be written by Amelia. Backend R8 defaults determine which single fires per lane. R7 dedup handles the substitution if the R8 default would duplicate a blend component.
+________________
+
+
+5.4  ·  Plan selector  ·  direct  ·  defaulted to 3 months
+Choose your plan.
+[ 1 month  ·  $X ]     [ 3 months  ·  $Y  ·  recommended ]     [ 6 months  ·  $Z ]
+Peptide protocols are clinically recommended to run for at least 3 months to signal your body properly.
+LOCKED: default selection is 3 months. Clinical framing line is verbatim — do not change. Prices shown specifically (stack is assembled by this screen — not "starting from"). When plan changes, sticky footer running total updates in real time.
+5.5  ·  Day-90 line  ·  warm-adjacent
+At day 90, your clinician reviews what moved and adjusts the next cycle around it.
+One line, directly under the plan selector. Makes the 3-month plan feel like a clinical instrument, not a subscription trap.
+5.6  ·  "Pairs well with"  ·  direct  ·  ONLY fires when base is solo (no adjunct)
+Fires only on Shape 2 (solo blend) per Backend §4. R7 dedup enforced — pairing molecule is never inside the primary blend.
+Pairs well with  —  [ Molecule ]
+[ One-line clinical reason ]
+[ Add to my protocol ]
+Locked pairings per Backend §4A: REPAIR + NAD+. PERFORM + MOTS-c. DEFINE + BPC-157. RESTORE + NAD+. Copy per pairing (one-line clinical reason) to be written by Amelia. Never appears on Shape 1 (recommend-less single), Shape 3 (blend+single), or Shape 4 (two singles).
+5.7  ·  Controls  ·  direct
+[ Swap the base ]     [ Remove supporting protocol ]     [ Start over ]
+No Add button. Pairs-well-with is the only AOV path (only on Shape 2). Add-anything turns the engine into a shop.
+5.8  ·  Sticky footer  ·  direct  ·  visible throughout scroll
+[ $Y / month  ·  3 months ]                              [ Begin clinical assessment → ]
+CRITICAL — sticks to bottom of viewport at all times, regardless of scroll position. Left: running total (updates when plan selector changes or pairs-well-with is added). Right: primary CTA to clinical intake. This is the conversion mechanism.
+________________
+
+
+5.9  ·  Recommend-less reveal  ·  warm  ·  single-only path
+Fires when Backend returns Shape 1 (single, no adjunct). Same page structure, shorter. NO pairs-well-with card — recommend-less discipline holds. Warm register throughout — the recommend-less reveal is the trust artefact of the whole system.
+Header
+One molecule, [name]. On purpose.
+Your answers point one clear direction. So we're not padding it — one variable means at day 90 you'll know exactly what worked, instead of guessing which of five things did. That's the honest call, even if it's the smaller cart.
+The molecule card
+[ Molecule name ]
+[ 4 benefit chips ]
+It's the compound built for the pattern you described. Nothing else earns a place yet.
+From $X/month
+Then  ·  plan selector, day-90 line, sticky footer
+Same plan selector (defaulted to 3 months, same locked framing line). Same day-90 line. Same sticky footer with running total + CTA. NO pairs-well-with card — this is the discipline.
+5.10  ·  Handoff CTA  ·  all reveal variants
+This is a personalised match, not a prescription. Everything you've entered passes to your clinical assessment — a licensed provider makes the final call. Peptide therapy is prescribed at a provider's discretion.
+[ Begin clinical assessment → ]
+SECTION 6  ·  HANDOFF TO INTAKE
+Everything passes by token into the clinical intake per Backend §6: first_name, sex_at_birth, lane, depth, all discriminator answers, qualifier, secondary_lane[], sleep_hours, stress_level, ninety_day_goal_text + timestamp, email, assembled_stack, chosen_plan_length. The intake does not re-ask any of it. Consent and eligibility begin there.
+________________
+
+
+APPENDIX  ·  VOICE PRINCIPLES
+The hybrid rule
+Direct register for: questions, options, engine-facing copy, plan selector, sticky footer, and reveal decision copy. These are where the customer is either doing work (answering) or making a choice (buying). Directness converts.
+Warm register for: Screen 1 opener, welcome interstitial, the read (Screen 10 top), and the recommend-less reveal. These are the emotional beats where the customer is being addressed, not asked to do anything.
+Warm-adjacent for: Screen 8B stress question, Screen 8C 90-day capture, day-90 line. Sit between the two — warmth in the framing, direct in the ask.
+Retired throughout
+The "that's not X, it's Y" construction. Warm without the formula — no reframing, no "you're not imagining this," no "it's not your fault." Warmth means addressing the customer as a person. It doesn't mean telling them how to feel about their own experience.
+What Amelia and Reid sign
+Reid signs the associative framing on Screen 10 (the read pairings) and the RESTORE lower-confidence positioning. Both already signed in Backend v2.1. Amelia signs the base card and supporting protocol card paragraphs when written, and the pairs-well-with one-liners. Voice register is Patrick's call.

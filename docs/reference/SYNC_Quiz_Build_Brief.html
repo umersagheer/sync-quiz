@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNC Quiz Build Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<style>
+:root{
+  --ground:#F6F7F9;
+  --surface:#FFFFFF;
+  --surface-2:#EDEFF3;
+  --ink:#11141A;
+  --ink-2:#3A4150;
+  --muted:#69717F;
+  --rule:#DCE0E7;
+  --rule-soft:#E9ECF1;
+  --flag:#C2102C;
+  --flag-bg:#FBEEF0;
+  --accent:#C67A38;
+  --accent-bg:#FAF2E9;
+  --ok:#1B6E52;
+  --ok-bg:#EAF3EF;
+  --shadow:0 1px 2px rgba(17,20,26,.05), 0 8px 24px -16px rgba(17,20,26,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1015;
+    --surface:#151920;
+    --surface-2:#1D222B;
+    --ink:#E7EAF0;
+    --ink-2:#B9C0CC;
+    --muted:#8E97A6;
+    --rule:#272D38;
+    --rule-soft:#1F242D;
+    --flag:#FF6478;
+    --flag-bg:#2A1319;
+    --accent:#E0A067;
+    --accent-bg:#251C12;
+    --ok:#4FB392;
+    --ok-bg:#10241E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1015;
+  --surface:#151920;
+  --surface-2:#1D222B;
+  --ink:#E7EAF0;
+  --ink-2:#B9C0CC;
+  --muted:#8E97A6;
+  --rule:#272D38;
+  --rule-soft:#1F242D;
+  --flag:#FF6478;
+  --flag-bg:#2A1319;
+  --accent:#E0A067;
+  --accent-bg:#251C12;
+  --ok:#4FB392;
+  --ok-bg:#10241E;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.62;
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px 96px}
+.col{max-width:68ch}
+h1,h2,h3,h4{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,5.2vw,3.1rem);font-weight:700;letter-spacing:-.028em;line-height:1.05}
+h2{font-size:clamp(1.5rem,3.2vw,2rem);font-weight:700;letter-spacing:-.022em;line-height:1.15}
+h3{font-size:1.16rem;font-weight:600;letter-spacing:-.012em;line-height:1.3}
+h4{font-size:.94rem;font-weight:600;letter-spacing:-.005em}
+p{margin:0}
+a{color:var(--accent)}
+strong{font-weight:600;color:var(--ink)}
+em{font-style:italic}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+code{font-size:.855em;background:var(--surface-2);padding:.12em .38em;border-radius:4px;color:var(--ink-2);word-break:break-word}
+
+/* ---- masthead ---- */
+.mast{padding:72px 0 40px;border-bottom:2px solid var(--ink)}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:22px}
+.mast .lede{font-size:1.16rem;color:var(--ink-2);margin-top:22px;max-width:60ch}
+.mast-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.tag{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;border:1px solid var(--rule);color:var(--muted);padding:5px 10px;border-radius:999px;background:var(--surface)}
+
+/* ---- sections ---- */
+section{padding-top:60px}
+.sechead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.secnum{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--accent);white-space:nowrap}
+.secrule{flex:1;height:1px;background:var(--rule);align-self:center}
+.sechead + p, h2 + p{margin-top:16px}
+.stack > * + *{margin-top:18px}
+.stack-sm > * + *{margin-top:11px}
+
+/* ---- figures ---- */
+figure{margin:34px 0 0;padding:0}
+.fig-shell{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:22px;box-shadow:var(--shadow);overflow-x:auto}
+.fig-shell svg{display:block;width:100%;min-width:600px;max-width:100%;height:auto;color:var(--ink-2)}
+figcaption{font-family:"JetBrains Mono",monospace;font-size:11.5px;line-height:1.55;color:var(--muted);margin-top:12px;letter-spacing:.01em}
+figcaption b{color:var(--ink-2);font-weight:500}
+
+/* ---- svg diagram language ---- */
+.dg-box{fill:var(--surface-2);stroke:var(--rule);stroke-width:1}
+.dg-plain{fill:none;stroke:var(--rule);stroke-width:1}
+.dg-ink{fill:var(--ink);stroke:none}
+.dg-accent-fill{fill:var(--accent-bg);stroke:var(--accent);stroke-width:1.25}
+.dg-flag-fill{fill:var(--flag-bg);stroke:var(--flag);stroke-width:1.25}
+.dg-ok-fill{fill:var(--ok-bg);stroke:var(--ok);stroke-width:1.25}
+.dg-line{stroke:var(--muted);stroke-width:1.4;fill:none}
+.dg-line-accent{stroke:var(--accent);stroke-width:1.6;fill:none}
+.dg-line-flag{stroke:var(--flag);stroke-width:1.6;fill:none}
+.dg-dash{stroke-dasharray:5 4}
+.dg-t{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;fill:var(--ink)}
+.dg-t-inv{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;fill:var(--ground)}
+.dg-s{font-family:"JetBrains Mono",monospace;font-size:10.5px;fill:var(--muted)}
+.dg-s-accent{font-family:"JetBrains Mono",monospace;font-size:10.5px;fill:var(--accent)}
+.dg-s-flag{font-family:"JetBrains Mono",monospace;font-size:10.5px;fill:var(--flag)}
+.dg-s-ok{font-family:"JetBrains Mono",monospace;font-size:10.5px;fill:var(--ok)}
+.dg-cap{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.13em;fill:var(--muted)}
+.mk-line{fill:var(--muted)}
+.mk-accent{fill:var(--accent)}
+.mk-flag{fill:var(--flag)}
+
+/* ---- callouts ---- */
+.note{border-left:3px solid var(--flag);background:var(--flag-bg);padding:16px 18px;border-radius:0 8px 8px 0}
+.note .lbl{font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--flag);display:block;margin-bottom:7px}
+.note p{font-size:.95rem;color:var(--ink-2)}
+.note p + p{margin-top:9px}
+.note.calm{border-left-color:var(--accent);background:var(--accent-bg)}
+.note.calm .lbl{color:var(--accent)}
+.note.good{border-left-color:var(--ok);background:var(--ok-bg)}
+.note.good .lbl{color:var(--ok)}
+
+blockquote{margin:0;padding:14px 0 14px 20px;border-left:2px solid var(--rule);color:var(--ink-2);font-style:italic}
+blockquote .src{display:block;font-family:"JetBrains Mono",monospace;font-style:normal;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:9px}
+
+/* ---- flag cards ---- */
+.flags{display:grid;gap:14px;margin-top:26px}
+.flag{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--rule);border-radius:0 10px 10px 0;padding:18px 20px;box-shadow:var(--shadow)}
+.flag.block{border-left-color:var(--flag)}
+.flag.watch{border-left-color:var(--accent)}
+.flag-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.sev{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:3.5px 8px;border-radius:4px}
+.sev.b{background:var(--flag);color:var(--surface)}
+.sev.w{background:var(--accent);color:var(--surface)}
+.sev.r{background:var(--ok);color:var(--surface)}
+.flag h3{flex:1;min-width:200px}
+.flag p{font-size:.95rem;color:var(--ink-2)}
+.flag p + p{margin-top:9px}
+.ask{margin-top:12px;padding-top:12px;border-top:1px dashed var(--rule);font-family:"JetBrains Mono",monospace;font-size:11.5px;line-height:1.55;color:var(--ink-2)}
+.ask b{color:var(--flag);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:10px;display:block;margin-bottom:5px}
+
+/* ---- table ---- */
+.tbl-shell{overflow-x:auto;margin-top:26px;border:1px solid var(--rule);border-radius:10px;background:var(--surface);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;min-width:660px;font-family:Archivo,sans-serif;font-size:.9rem}
+th{background:var(--surface-2);text-align:left;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--rule)}
+td{padding:14px 16px;border-bottom:1px solid var(--rule-soft);vertical-align:top;color:var(--ink-2);line-height:1.5}
+tr:last-child td{border-bottom:none}
+td:first-child{font-family:"JetBrains Mono",monospace;font-size:.83rem;color:var(--ink);font-weight:500;white-space:nowrap}
+.v{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3.5px 8px;border-radius:4px;white-space:nowrap;display:inline-block}
+.v.yes{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok)}
+.v.no{background:var(--flag-bg);color:var(--flag);border:1px solid var(--flag)}
+.v.part{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent)}
+
+/* ---- phases ---- */
+.phases{display:grid;gap:0;margin-top:26px;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.ph{display:grid;grid-template-columns:96px 1fr;gap:18px;padding:18px 20px;border-bottom:1px solid var(--rule-soft)}
+.ph:last-child{border-bottom:none}
+.ph-n{font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:2px}
+.ph-n span{display:block;color:var(--muted);font-weight:400;letter-spacing:.06em;margin-top:4px}
+.ph h4{margin-bottom:6px}
+.ph p{font-size:.91rem;color:var(--ink-2);font-family:"Source Serif 4",serif}
+
+ul.tight{margin:0;padding-left:1.15em}
+ul.tight li{margin-bottom:7px;color:var(--ink-2)}
+ul.tight li:last-child{margin-bottom:0}
+ul.tight li::marker{color:var(--accent)}
+
+.endrule{margin-top:72px;padding-top:22px;border-top:2px solid var(--ink);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .wrap{padding:0 18px 72px}
+  .mast{padding:48px 0 32px}
+  .ph{grid-template-columns:1fr;gap:8px}
+  .fig-shell{padding:14px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kicker">Lead brief · Engineering read</div>
+  <h1>SYNC Quiz &amp; Reveal</h1>
+  <p class="lede">A physician-supervised peptide telehealth funnel. We build the 15-screen quiz and the reveal page that sits in front of the clinical intake. Here is what the job actually is, how it should be architected, and the three things that have to be resolved before anyone quotes a number.</p>
+  <div class="mast-meta">
+    <span class="tag">Next.js · App Router</span>
+    <span class="tag">Storyblok</span>
+    <span class="tag">Vercel</span>
+    <span class="tag">Mobile-first</span>
+    <span class="tag">Handoff → Bask EMR</span>
+  </div>
+</header>
+
+<section style="padding-top:44px">
+  <div class="col">
+    <div class="note good">
+      <span class="lbl">Where this stands · updated after the scoping call</span>
+      <p><strong>The reveal is settled.</strong> Patrick wants the full commerce page — compound names, prices, upsell, sticky footer. Blocker 01 below is closed by his decision.</p>
+      <p><strong>Backend Mapping v2.1 arrived</strong> and is signed off with zero open items: R1–R8, the R7 substitution table, per-lane triggers, four shapes, the handoff payload and an eighteen-path test matrix. Blocker 02 is closed. The matrix is now the engine's test suite.</p>
+      <p><strong>New constraint: LegitScript.</strong> Their certification gates all paid media and had not returned at the time of the call. The cleared formulary can therefore change days before launch, so it is built as configuration the engine filters against, not as hardcoded logic.</p>
+      <p><strong>Delivery shape:</strong> a standalone Next.js application built to production standards, deployed independently, moving into the client repo when access lands. Phased plan lives in <code>docs/BUILD_PLAN.md</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">01</span><span class="secrule"></span></div>
+  <h2>The product in one read</h2>
+  <div class="col stack" style="margin-top:16px">
+    <p>SYNC sells compounded peptides — injectable compounds like BPC-157 and Sermorelin — through a US telehealth model. Cash-pay, no insurance. You can't just buy them; a licensed provider has to prescribe, so every customer must pass through a real clinical assessment.</p>
+    <p>That clinical assessment is boring and long. So SYNC puts a <strong>quiz</strong> in front of it. The quiz asks what you're struggling with, gives you a personalised "here's what fits you" moment, captures your email, and then hands you into the clinical intake with all your answers already filled in.</p>
+    <p><strong>We are building the quiz and the reveal.</strong> Not the clinical intake — that's on Bask, their telehealth backend partner. Our job ends at a button that passes the customer and their answers across.</p>
+    <p>The reveal screen is the whole point. Everything before it is trust-building; the reveal is where the customer either converts or leaves. Treat it as the deliverable and the fifteen screens before it as the setup.</p>
+  </div>
+
+  <div class="col" style="margin-top:26px">
+    <div class="note calm">
+      <span class="lbl">Correction to the brief you were given</span>
+      <p><strong>The engine is not built.</strong> The message says "engine logic and mapping — all complete," but that means the <em>documents</em> are complete. The copy layer says, in the present tense, "Zarar builds engine logic against that doc." Nobody has written it yet.</p>
+      <p>Worse: the document that defines it — <em>Backend Mapping v2.1</em>, holding rules R1–R8, the per-lane triggers, the four output shapes, the read-variant table and the handoff spec — <strong>was not sent to us.</strong> Every page of the copy layer we do have points at it. Without it there is no engine, no reveal branching, and no handoff.</p>
+      <p>So find out on the call: does Zarar own the engine, or do we? If he does, we need his input/output contract on day one and we build against a mock. If we do, that is real scope that "this is just implementation" does not cover.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">02</span><span class="secrule"></span></div>
+  <h2>What we're actually building</h2>
+  <p class="col" style="margin-top:16px">The system is small, but it has one hard architectural rule: the mapping from a customer's answers to a named compound must never reach the browser. That single constraint decides where everything sits.</p>
+
+  <figure>
+    <div class="fig-shell">
+      <svg viewBox="0 0 940 400" role="img" aria-label="System map: Storyblok supplies copy to a Next.js app on Vercel; the quiz UI runs in the browser while the engine, session store and Bask handoff run server-side behind a browser boundary.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-line"/></marker>
+          <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-accent"/></marker>
+        </defs>
+
+        <!-- browser boundary -->
+        <line x1="330" y1="18" x2="330" y2="382" class="dg-line dg-dash"/>
+        <text x="322" y="32" text-anchor="end" class="dg-cap">BROWSER</text>
+        <text x="340" y="32" class="dg-cap">SERVER · NEVER SHIPPED TO CLIENT</text>
+
+        <!-- Storyblok -->
+        <rect x="14" y="58" width="150" height="86" rx="8" class="dg-accent-fill"/>
+        <text x="30" y="84" class="dg-t">Storyblok</text>
+        <text x="30" y="102" class="dg-s">headlines, options,</text>
+        <text x="30" y="116" class="dg-s">education, chips,</text>
+        <text x="30" y="130" class="dg-s">card paragraphs</text>
+
+        <!-- quiz UI -->
+        <rect x="14" y="196" width="150" height="128" rx="8" class="dg-box"/>
+        <text x="30" y="222" class="dg-t">Quiz UI</text>
+        <text x="30" y="240" class="dg-s">15 screens</text>
+        <text x="30" y="254" class="dg-s">Zustand mirror</text>
+        <text x="30" y="268" class="dg-s">branch routing</text>
+        <text x="30" y="290" class="dg-s-accent">holds: answers</text>
+        <text x="30" y="304" class="dg-s-flag">never: the mapping</text>
+
+        <!-- copy arrow -->
+        <path d="M89,150 L89,190" class="dg-line-accent" marker-end="url(#a2)"/>
+        <text x="97" y="174" class="dg-s-accent">published copy</text>
+
+        <!-- Next.js server box -->
+        <rect x="366" y="58" width="272" height="266" rx="10" class="dg-plain"/>
+        <text x="384" y="82" class="dg-cap">NEXT.JS ROUTE HANDLERS · NODE</text>
+
+        <rect x="384" y="96" width="236" height="74" rx="7" class="dg-flag-fill"/>
+        <text x="400" y="120" class="dg-t">Engine · R1–R8</text>
+        <text x="400" y="138" class="dg-s">answers → shape → compounds</text>
+        <text x="400" y="154" class="dg-s-flag">pure TS · 18-path test matrix</text>
+
+        <rect x="384" y="186" width="236" height="54" rx="7" class="dg-box"/>
+        <text x="400" y="208" class="dg-t">Session · autosave</text>
+        <text x="400" y="226" class="dg-s">signed httpOnly cookie</text>
+
+        <rect x="384" y="256" width="236" height="50" rx="7" class="dg-box"/>
+        <text x="400" y="278" class="dg-t">Token mint · handoff</text>
+        <text x="400" y="294" class="dg-s">signs the full answer set</text>
+
+        <!-- arrows UI <-> server -->
+        <path d="M170,230 L378,213" class="dg-line" marker-end="url(#a1)"/>
+        <text x="182" y="212" class="dg-s">autosave each answer</text>
+        <path d="M378,140 L170,262" class="dg-line" marker-end="url(#a1)"/>
+        <text x="182" y="288" class="dg-s" text-anchor="start">result: names + prices only</text>
+
+        <!-- postgres -->
+        <rect x="676" y="186" width="150" height="54" rx="7" class="dg-box"/>
+        <text x="692" y="208" class="dg-t">Postgres</text>
+        <text x="692" y="226" class="dg-s">answers · resume · PHI</text>
+        <path d="M624,213 L670,213" class="dg-line" marker-end="url(#a1)"/>
+
+        <!-- bask -->
+        <rect x="676" y="256" width="248" height="68" rx="7" class="dg-ok-fill"/>
+        <text x="692" y="280" class="dg-t">Bask EMR · partner</text>
+        <text x="692" y="298" class="dg-s">clinical intake, gates, prescriber</text>
+        <text x="692" y="314" class="dg-s-ok">not our build — ends here</text>
+        <path d="M624,281 L670,281" class="dg-line" marker-end="url(#a1)"/>
+
+        <!-- capi -->
+        <rect x="676" y="96" width="248" height="62" rx="7" class="dg-box"/>
+        <text x="692" y="120" class="dg-t">Meta / Google CAPI</text>
+        <text x="692" y="138" class="dg-s">server-side events only</text>
+        <text x="692" y="152" class="dg-s-flag">no health-adjacent params</text>
+        <path d="M624,127 L670,127" class="dg-line" marker-end="url(#a1)"/>
+
+        <text x="366" y="352" class="dg-s-flag">The compound mapping never crosses the dashed line. If it ships in the JS bundle, anyone can read</text>
+        <text x="366" y="368" class="dg-s-flag">"these answers → BPC-157" — which is the promotional claim their own clinical lead vetoed.</text>
+      </svg>
+    </div>
+    <figcaption><b>Where each piece runs.</b> Storyblok feeds copy into the app. The browser holds answers and renders screens. The engine, the session store and the Bask token all sit server-side — deliberately, because the answers-to-compound map is the one asset that must not be readable by a customer.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">03</span><span class="secrule"></span></div>
+  <h2>The flow you'll be implementing</h2>
+  <p class="col" style="margin-top:16px">Seven linear screens, then a fan-out into one of five branches, then everything converges again for the cross-signal questions, an email gate, and the reveal. Only one branch ever fires per customer.</p>
+
+  <figure>
+    <div class="fig-shell">
+      <svg viewBox="0 0 940 560" role="img" aria-label="Screen flow: seven linear screens, a fan into five lane branches each with discriminator, qualifier and education screens, converging into sleep, stress, ninety-day capture, an email gate and the reveal.">
+        <defs>
+          <marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-line"/></marker>
+          <marker id="b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-accent"/></marker>
+        </defs>
+
+        <text x="14" y="22" class="dg-cap">SECTION 1–2 · EVERY CUSTOMER</text>
+        <g>
+          <rect x="14" y="34" width="106" height="44" rx="6" class="dg-box"/><text x="26" y="54" class="dg-t">1 Welcome</text><text x="26" y="69" class="dg-s">no consent wall</text>
+          <rect x="134" y="34" width="94" height="44" rx="6" class="dg-box"/><text x="146" y="54" class="dg-t">2 Name</text><text x="146" y="69" class="dg-s">first_name</text>
+          <rect x="242" y="34" width="112" height="44" rx="6" class="dg-box"/><text x="254" y="54" class="dg-t">3 Interstitial</text><text x="254" y="69" class="dg-s">no input</text>
+          <rect x="368" y="34" width="100" height="44" rx="6" class="dg-box"/><text x="380" y="54" class="dg-t">4 Sex</text><text x="380" y="69" class="dg-s">sex_at_birth</text>
+          <rect x="482" y="34" width="126" height="44" rx="6" class="dg-accent-fill"/><text x="494" y="54" class="dg-t">5 Primary goal</text><text x="494" y="69" class="dg-s-accent">sets the lane</text>
+          <rect x="622" y="34" width="100" height="44" rx="6" class="dg-box"/><text x="634" y="54" class="dg-t">6 Depth</text><text x="634" y="69" class="dg-s">single/layered</text>
+          <rect x="736" y="34" width="132" height="44" rx="6" class="dg-box"/><text x="748" y="54" class="dg-t">7 Secondary</text><text x="748" y="69" class="dg-s">multi-select</text>
+        </g>
+        <path d="M120,56 L130,56 M228,56 L238,56 M354,56 L364,56 M468,56 L478,56 M608,56 L618,56 M722,56 L732,56" class="dg-line" marker-end="url(#b1)"/>
+
+        <!-- fan -->
+        <path d="M545,82 L545,104 L60,104 L60,126" class="dg-line-accent" marker-end="url(#b2)"/>
+        <path d="M545,82 L545,104 L60,104" class="dg-line-accent"/>
+        <text x="560" y="100" class="dg-s-accent">lane from Screen 5 chooses exactly one branch below</text>
+
+        <text x="14" y="126" class="dg-cap">SECTION 3 · ONE BRANCH ONLY</text>
+        <g>
+          <rect x="14" y="138" width="642" height="34" rx="6" class="dg-box"/>
+          <text x="26" y="159" class="dg-t">A · REPAIR</text>
+          <text x="128" y="159" class="dg-s">discriminator (multi) → qualifier: inflammation → education</text>
+          <text x="530" y="159" class="dg-s-accent">3 screens</text>
+
+          <rect x="14" y="180" width="642" height="34" rx="6" class="dg-box"/>
+          <text x="26" y="201" class="dg-t">B · PERFORM</text>
+          <text x="128" y="201" class="dg-s">discriminator (multi) → qualifier: training load → education</text>
+          <text x="530" y="201" class="dg-s-accent">3 screens</text>
+
+          <rect x="14" y="222" width="642" height="34" rx="6" class="dg-box"/>
+          <text x="26" y="243" class="dg-t">C · DEFINE</text>
+          <text x="128" y="243" class="dg-s">pinch test (single) → qualifier: GLP-1 history → education</text>
+          <text x="530" y="243" class="dg-s-accent">3 screens</text>
+
+          <rect x="14" y="264" width="642" height="34" rx="6" class="dg-box"/>
+          <text x="26" y="285" class="dg-t">D · RESTORE</text>
+          <text x="128" y="285" class="dg-s">discriminator (multi) → qualifier: sleep rhythm → education</text>
+          <text x="530" y="285" class="dg-s-accent">3 screens</text>
+
+          <rect x="14" y="306" width="642" height="34" rx="6" class="dg-box"/>
+          <text x="26" y="327" class="dg-t">E · PT-141</text>
+          <text x="128" y="327" class="dg-s">qualifier only, no discriminator → education</text>
+          <text x="530" y="327" class="dg-s-accent">2 screens</text>
+        </g>
+        <rect x="676" y="138" width="248" height="202" rx="8" class="dg-flag-fill"/>
+        <text x="692" y="162" class="dg-t">Two same-screen devices</text>
+        <text x="692" y="184" class="dg-s">Recognition line — red bar, appears</text>
+        <text x="692" y="198" class="dg-s">under the options the moment a</text>
+        <text x="692" y="212" class="dg-s">clinical pattern fires. Not its own</text>
+        <text x="692" y="226" class="dg-s">screen. Conditional on answer combo.</text>
+        <text x="692" y="252" class="dg-s">Education screen — grey box, its own</text>
+        <text x="692" y="266" class="dg-s">screen, one per branch, no input,</text>
+        <text x="692" y="280" class="dg-s">no product mention.</text>
+        <text x="692" y="306" class="dg-s-flag">Both are pure drop-off surface.</text>
+        <text x="692" y="320" class="dg-s-flag">See flag 06.</text>
+
+        <path d="M335,346 L335,368" class="dg-line" marker-end="url(#b1)"/>
+
+        <text x="14" y="386" class="dg-cap">SECTION 4 · EVERY CUSTOMER AGAIN</text>
+        <g>
+          <rect x="14" y="398" width="120" height="44" rx="6" class="dg-box"/><text x="26" y="418" class="dg-t">8A Sleep</text><text x="26" y="433" class="dg-s">feeds the read</text>
+          <rect x="148" y="398" width="120" height="44" rx="6" class="dg-box"/><text x="160" y="418" class="dg-t">8B Stress</text><text x="160" y="433" class="dg-s">feeds the read</text>
+          <rect x="282" y="398" width="150" height="44" rx="6" class="dg-box"/><text x="294" y="418" class="dg-t">8C 90-day goal</text><text x="294" y="433" class="dg-s">free text + timestamp</text>
+          <rect x="446" y="398" width="150" height="44" rx="6" class="dg-flag-fill"/><text x="458" y="418" class="dg-t">9 Email</text><text x="458" y="433" class="dg-s-flag">gates the reveal</text>
+        </g>
+        <path d="M134,420 L144,420 M268,420 L278,420 M432,420 L442,420" class="dg-line" marker-end="url(#b1)"/>
+        <path d="M596,420 L640,420" class="dg-line-accent" marker-end="url(#b2)"/>
+
+        <rect x="646" y="384" width="278" height="72" rx="8" class="dg-accent-fill"/>
+        <text x="662" y="408" class="dg-t">10 · The reveal</text>
+        <text x="662" y="426" class="dg-s">engine runs server-side, returns a shape</text>
+        <text x="662" y="442" class="dg-s-accent">→ one of two page templates, see next figure</text>
+
+        <line x1="14" y1="482" x2="924" y2="482" class="dg-line dg-dash"/>
+        <text x="14" y="506" class="dg-t">15 screens for lanes A–D. 14 for lane E.</text>
+        <text x="14" y="526" class="dg-s">The brief says "eleven-plus." Counting the branch qualifier and the five education screens, it is fifteen — about 40% more taps</text>
+        <text x="14" y="542" class="dg-s">than the estimate the drop-off maths was built on. Worth correcting on the call, because it changes both the funnel model and the quote.</text>
+      </svg>
+    </div>
+    <figcaption><b>The full screen graph.</b> Linear → branch → linear. The branch is the only conditional structure in the quiz; everything else is a straight line. Recognition lines render inline on the answer screen, not as separate steps.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">04</span><span class="secrule"></span></div>
+  <h2>The reveal: four inputs, two pages</h2>
+  <p class="col" style="margin-top:16px">The engine returns one of four output shapes. Those collapse into two page templates — and the client is explicit that the shorter one must stay a separate template, not a conditional inside the standard one. He calls it "a positioning discipline, not an edge case." Build it as its own route and its own component tree.</p>
+
+  <figure>
+    <div class="fig-shell">
+      <svg viewBox="0 0 940 430" role="img" aria-label="Four engine output shapes map to two reveal templates; the pairs-well-with upsell card fires on exactly one shape.">
+        <defs>
+          <marker id="c1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-line"/></marker>
+          <marker id="c2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-accent"/></marker>
+        </defs>
+
+        <text x="14" y="22" class="dg-cap">ENGINE OUTPUT</text>
+        <rect x="14" y="34" width="196" height="50" rx="6" class="dg-ok-fill"/>
+        <text x="28" y="55" class="dg-t">Shape 1 · single</text><text x="28" y="72" class="dg-s">one molecule, no adjunct</text>
+
+        <rect x="14" y="98" width="196" height="50" rx="6" class="dg-accent-fill"/>
+        <text x="28" y="119" class="dg-t">Shape 2 · solo blend</text><text x="28" y="136" class="dg-s-accent">the only upsell path</text>
+
+        <rect x="14" y="162" width="196" height="50" rx="6" class="dg-box"/>
+        <text x="28" y="183" class="dg-t">Shape 3 · blend + single</text><text x="28" y="200" class="dg-s">adjunct already added</text>
+
+        <rect x="14" y="226" width="196" height="50" rx="6" class="dg-box"/>
+        <text x="28" y="247" class="dg-t">Shape 4 · two singles</text><text x="28" y="264" class="dg-s">adjunct already added</text>
+
+        <path d="M216,59 L282,72" class="dg-line" marker-end="url(#c1)"/>
+        <path d="M216,123 L282,182" class="dg-line-accent" marker-end="url(#c2)"/>
+        <path d="M216,187 L282,196" class="dg-line" marker-end="url(#c1)"/>
+        <path d="M216,251 L282,210" class="dg-line" marker-end="url(#c1)"/>
+
+        <!-- template A -->
+        <rect x="292" y="34" width="272" height="94" rx="8" class="dg-ok-fill"/>
+        <text x="308" y="57" class="dg-t">Recommend-less reveal</text>
+        <text x="308" y="76" class="dg-s">read · molecule card · plan selector</text>
+        <text x="308" y="90" class="dg-s">day-90 line · sticky footer</text>
+        <text x="308" y="112" class="dg-s-ok">no upsell card — this is the trust artefact</text>
+
+        <!-- template B -->
+        <rect x="292" y="150" width="272" height="152" rx="8" class="dg-box"/>
+        <text x="308" y="173" class="dg-t">Standard reveal · PDP</text>
+        <text x="308" y="192" class="dg-s">read</text>
+        <text x="308" y="206" class="dg-s">base card · 4 chips · 3-line para · price</text>
+        <text x="308" y="220" class="dg-s">supporting card — shapes 3 &amp; 4 only</text>
+        <text x="308" y="234" class="dg-s-accent">pairs-well-with — shape 2 only</text>
+        <text x="308" y="248" class="dg-s">plan selector 1/3/6, default 3</text>
+        <text x="308" y="262" class="dg-s">day-90 line</text>
+        <text x="308" y="276" class="dg-s">swap / remove / start over</text>
+        <text x="308" y="290" class="dg-s">sticky footer · running total + CTA</text>
+
+        <!-- right notes -->
+        <rect x="596" y="34" width="328" height="130" rx="8" class="dg-flag-fill"/>
+        <text x="612" y="57" class="dg-t">Two separate routes</text>
+        <text x="612" y="78" class="dg-s">The client will not accept the short version</text>
+        <text x="612" y="92" class="dg-s">as an <tspan class="mono">isRecommendLess</tspan> flag inside the</text>
+        <text x="612" y="106" class="dg-s">standard template. Separate route, separate</text>
+        <text x="612" y="120" class="dg-s">component tree, shared primitives only.</text>
+        <text x="612" y="144" class="dg-s-flag">Push back if you disagree — but know it is a</text>
+        <text x="612" y="158" class="dg-s-flag">stated product decision, not an oversight.</text>
+
+        <rect x="596" y="180" width="328" height="122" rx="8" class="dg-box"/>
+        <text x="612" y="203" class="dg-t">Sticky footer · the money</text>
+        <text x="612" y="224" class="dg-s">Fixed to viewport through all scroll. Left:</text>
+        <text x="612" y="238" class="dg-s">running total. Right: CTA into the intake.</text>
+        <text x="612" y="258" class="dg-s-accent">iOS gotcha — size with <tspan class="mono">100dvh</tspan>, not <tspan class="mono">100vh</tspan>,</text>
+        <text x="612" y="272" class="dg-s-accent">and pad with <tspan class="mono">env(safe-area-inset-bottom)</tspan></text>
+        <text x="612" y="286" class="dg-s-accent">or it hides under the home indicator.</text>
+
+        <line x1="14" y1="330" x2="924" y2="330" class="dg-line dg-dash"/>
+        <text x="14" y="354" class="dg-t">The pairs-well-with card is the entire AOV mechanism, and it fires on one shape out of four.</text>
+        <text x="14" y="374" class="dg-s">Locked pairings: REPAIR+NAD+, PERFORM+MOTS-c, DEFINE+BPC-157, RESTORE+NAD+. There is deliberately no generic "add" button —</text>
+        <text x="14" y="390" class="dg-s">the doc says add-anything "turns the engine into a shop." So the upsell surface is narrow and rule-bound. Don't generalise it into a</text>
+        <text x="14" y="406" class="dg-s">product grid because it looks like one; the constraint is intentional and it is the thing that keeps the reveal defensible.</text>
+      </svg>
+    </div>
+    <figcaption><b>Shape → template.</b> Four engine outputs, two pages, one conditional upsell. Getting this routing wrong is the most likely source of silent bugs, which is why the 18-path test matrix in the missing mapping doc matters so much.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">05</span><span class="secrule"></span></div>
+  <h2>The contradiction nobody has flagged</h2>
+  <div class="col stack" style="margin-top:16px">
+    <p>The two documents we were sent describe the same customer at the same moment — and they disagree about what he is allowed to see. This is not a detail. It decides whether the reveal is a commerce page or a holding screen, and that is most of the build.</p>
+  </div>
+
+  <div class="col" style="margin-top:24px">
+    <blockquote>
+      Your base — REPAIR. [4 benefit chips] … From $X/month.
+      <span class="src">Copy Layer v2.1 · §5.2 · the reveal, pre-consult</span>
+    </blockquote>
+    <blockquote style="margin-top:14px;border-left-color:var(--flag)">
+      No molecule and no dose on this screen, ever. The moment a patient sees "BPC-157, 250mcg" before I've reviewed them, this stops being telehealth and becomes a vending machine — and it becomes indefensible.
+      <span class="src">Dr. Marcus Reid · Intake Build Spec v1.0 · patient-facing results</span>
+    </blockquote>
+  </div>
+
+  <figure>
+    <div class="fig-shell">
+      <svg viewBox="0 0 940 430" role="img" aria-label="Side by side comparison of the reveal screen as specified in the copy layer versus what the clinical lead's rule permits; the entire commerce layer is removed.">
+        <defs>
+          <marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-flag"/></marker>
+        </defs>
+
+        <text x="14" y="22" class="dg-cap">AS SPECCED · COPY LAYER v2.1</text>
+        <rect x="14" y="34" width="310" height="330" rx="10" class="dg-box"/>
+        <text x="32" y="60" class="dg-s">Here's what we see, Marcus.</text>
+        <rect x="32" y="74" width="274" height="72" rx="6" class="dg-accent-fill"/>
+        <text x="46" y="96" class="dg-t">Your base — REPAIR</text>
+        <text x="46" y="114" class="dg-s">🧬 Systemic repair · 🔥 Inflammation</text>
+        <text x="46" y="128" class="dg-s">💊 Gut lining · ⚙️ Connective tissue</text>
+        <text x="46" y="142" class="dg-s-accent">From $189 / month</text>
+
+        <rect x="32" y="158" width="274" height="54" rx="6" class="dg-accent-fill"/>
+        <text x="46" y="180" class="dg-t">Supporting — NAD+</text>
+        <text x="46" y="198" class="dg-s-accent">From $74 / month</text>
+
+        <rect x="32" y="224" width="86" height="40" rx="6" class="dg-plain"/><text x="46" y="242" class="dg-s">1 mo</text><text x="46" y="256" class="dg-s">$263</text>
+        <rect x="126" y="224" width="86" height="40" rx="6" class="dg-accent-fill"/><text x="140" y="242" class="dg-s">3 mo ★</text><text x="140" y="256" class="dg-s-accent">$237</text>
+        <rect x="220" y="224" width="86" height="40" rx="6" class="dg-plain"/><text x="234" y="242" class="dg-s">6 mo</text><text x="234" y="256" class="dg-s">$212</text>
+
+        <rect x="32" y="276" width="274" height="34" rx="6" class="dg-plain"/>
+        <text x="46" y="297" class="dg-s">Pairs well with — NAD+ · [ Add ]</text>
+
+        <rect x="32" y="320" width="274" height="34" rx="6" class="dg-ink"/>
+        <text x="46" y="341" class="dg-t-inv">$237 / mo</text>
+        <text x="200" y="341" class="dg-t-inv">Begin assessment →</text>
+
+        <!-- delta arrow -->
+        <path d="M336,190 L444,190" class="dg-line-flag" marker-end="url(#d1)"/>
+        <text x="390" y="176" text-anchor="middle" class="dg-s-flag">Reid's rule</text>
+        <text x="390" y="212" text-anchor="middle" class="dg-s-flag">applied</text>
+
+        <text x="456" y="22" class="dg-cap">AS PERMITTED · INTAKE SPEC v1.0</text>
+        <rect x="456" y="34" width="310" height="330" rx="10" class="dg-box"/>
+        <text x="474" y="60" class="dg-s">Here's what we see, Marcus.</text>
+        <rect x="474" y="74" width="274" height="86" rx="6" class="dg-ok-fill"/>
+        <text x="488" y="98" class="dg-t">Your focus area: Recovery</text>
+        <text x="488" y="118" class="dg-s">Plain-language why, tied to your</text>
+        <text x="488" y="132" class="dg-s">answers. No compound named.</text>
+        <text x="488" y="152" class="dg-s-ok">No dose. No price.</text>
+
+        <rect x="474" y="174" width="274" height="52" rx="6" class="dg-box"/>
+        <text x="488" y="196" class="dg-s">A SYNC-affiliated provider will</text>
+        <text x="488" y="212" class="dg-s">review your intake and confirm.</text>
+
+        <rect x="474" y="320" width="274" height="34" rx="6" class="dg-ink"/>
+        <text x="488" y="341" class="dg-t-inv">Begin assessment →</text>
+
+        <text x="474" y="256" class="dg-s-flag">✕ base card price</text>
+        <text x="474" y="274" class="dg-s-flag">✕ supporting protocol card</text>
+        <text x="474" y="292" class="dg-s-flag">✕ plan selector · running total</text>
+        <text x="620" y="256" class="dg-s-flag">✕ pairs-well-with upsell</text>
+        <text x="620" y="274" class="dg-s-flag">✕ swap / remove controls</text>
+        <text x="620" y="292" class="dg-s-flag">✕ sticky footer total</text>
+
+        <text x="778" y="60" class="dg-t">What's at stake</text>
+        <rect x="778" y="74" width="146" height="1" class="dg-plain"/>
+        <text x="778" y="98" class="dg-s">The right-hand page is</text>
+        <text x="778" y="112" class="dg-s">roughly a fifth of the</text>
+        <text x="778" y="126" class="dg-s">work of the left-hand</text>
+        <text x="778" y="140" class="dg-s">one — and it deletes</text>
+        <text x="778" y="154" class="dg-s">the conversion model</text>
+        <text x="778" y="168" class="dg-s">the business is built on.</text>
+        <text x="778" y="196" class="dg-s-flag">Neither we nor the</text>
+        <text x="778" y="210" class="dg-s-flag">client can resolve this.</text>
+        <text x="778" y="224" class="dg-s-flag">Reid and Amelia have</text>
+        <text x="778" y="238" class="dg-s-flag">to, together, before</text>
+        <text x="778" y="252" class="dg-s-flag">anyone quotes.</text>
+
+        <text x="14" y="392" class="dg-s">Note the quiz reveal sits <tspan font-weight="700">earlier</tspan> in the funnel than the intake screen Reid was writing about — pre-consult, pre-eligibility, pre-gates. So the</text>
+        <text x="14" y="410" class="dg-s">rule he wrote applies to it with more force, not less. This is worth raising as a question, not an accusation: the two docs may simply have</text>
+        <text x="14" y="428" class="dg-s">been written by different people who have not read each other's.</text>
+      </svg>
+    </div>
+    <figcaption><b>The same moment, two specifications.</b> Everything struck through on the right is scope that exists in one document and is forbidden by the other. The delta is the plan selector, the running total, the upsell card and the sticky footer — which is to say, the reveal.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">06</span><span class="secrule"></span></div>
+  <h2>Storyblok: how it works, and how not to use it</h2>
+  <div class="col stack" style="margin-top:16px">
+    <p>Support for Next.js is first-class. <code>@storyblok/react</code> is on v6 and ships a <code>/rsc</code> entry point built for the App Router — server components render CMS content directly, and the Visual Editor still works. Practically: <code>storyblokInit()</code> with <code>apiPlugin</code>, fetch via <code>getStoryblokApi()</code>, render with <code>StoryblokServerComponent</code>, and spread <code>storyblokEditable(blok)</code> onto elements so clicking them in the editor iframe selects them.</p>
+    <p>Two tokens, two modes. The editor previews <code>version: "draft"</code> with the preview token over an HTTPS preview URL; production serves <code>version: "published"</code> with the public token, cached, and a Storyblok webhook hits <code>/api/revalidate</code> to call <code>revalidateTag()</code>. Copy changes go live in seconds with no deploy — which is exactly what the client asked for.</p>
+    <p>Now the part that matters. There are two ways to use Storyblok, and the obvious one is wrong for this project.</p>
+    <p><strong>Page-builder mode</strong> — every screen is a nestable blok, editors drag, drop and reorder, and we render whatever tree the API returns. This is how most Storyblok tutorials work, and it would let a marketer delete the option whose value is <code>gut_mucosal</code> and silently break the REPAIR branch for every customer in it. The failure is invisible until someone lands on a dead route.</p>
+    <p><strong>Typed content-source mode</strong> — Storyblok holds a fixed set of entries against a locked schema. Our code owns the screen order, the state machine and the answer values. We fetch, validate with Zod, and render our own components. <strong>This is what we should build.</strong> The client's actual stated need is "iterate copy without a deploy." That need is fully met here. What he does not need — and should not have — is the ability to restructure a clinical routing funnel without a review.</p>
+  </div>
+
+  <figure>
+    <div class="fig-shell">
+      <svg viewBox="0 0 940 420" role="img" aria-label="Storyblok content passes through a Zod validation boundary before reaching the app; option labels are editable while option values are locked to a datasource of legal engine tokens.">
+        <defs>
+          <marker id="e1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-line"/></marker>
+          <marker id="e2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-accent"/></marker>
+        </defs>
+
+        <text x="14" y="22" class="dg-cap">STORYBLOK</text>
+        <rect x="14" y="34" width="216" height="164" rx="8" class="dg-accent-fill"/>
+        <text x="30" y="58" class="dg-t">quiz-screen</text>
+        <text x="30" y="80" class="dg-s">eyebrow · headline · subcopy</text>
+        <text x="30" y="96" class="dg-s">options[] → label, sublabel, icon</text>
+        <text x="30" y="112" class="dg-s">recognition_line + fire condition</text>
+        <text x="30" y="132" class="dg-t">datasource: engine-values</text>
+        <text x="30" y="150" class="dg-s">every legal token, locked list</text>
+        <text x="30" y="166" class="dg-s">editors bind, never type</text>
+        <text x="30" y="188" class="dg-s-accent">Visual Editor previews the real screen</text>
+
+        <path d="M236,116 L292,116" class="dg-line-accent" marker-end="url(#e2)"/>
+        <text x="244" y="106" class="dg-s-accent">fetch</text>
+
+        <rect x="298" y="76" width="150" height="80" rx="8" class="dg-flag-fill"/>
+        <text x="314" y="102" class="dg-t">Zod boundary</text>
+        <text x="314" y="122" class="dg-s">parse every payload</text>
+        <text x="314" y="138" class="dg-s">before it renders</text>
+
+        <path d="M454,100 L512,64" class="dg-line" marker-end="url(#e1)"/>
+        <path d="M454,116 L512,142" class="dg-line" marker-end="url(#e1)"/>
+        <path d="M454,132 L512,214" class="dg-line" marker-end="url(#e1)"/>
+
+        <rect x="518" y="34" width="286" height="56" rx="7" class="dg-ok-fill"/>
+        <text x="534" y="56" class="dg-t">Pass → typed content, render</text>
+        <text x="534" y="76" class="dg-s">option.value is a known engine token</text>
+
+        <rect x="518" y="106" width="286" height="66" rx="7" class="dg-box"/>
+        <text x="534" y="128" class="dg-t">Fail in preview → loud</text>
+        <text x="534" y="148" class="dg-s">"Screen 6 is missing option value</text>
+        <text x="534" y="164" class="dg-s"><tspan class="mono">depth_layered</tspan>" — editor sees it, fixes it</text>
+
+        <rect x="518" y="188" width="286" height="66" rx="7" class="dg-box"/>
+        <text x="534" y="210" class="dg-t">Fail in production → quiet</text>
+        <text x="534" y="230" class="dg-s">serve last known-good snapshot,</text>
+        <text x="534" y="246" class="dg-s">alert us. A bad publish never takes</text>
+        <text x="534" y="262" class="dg-s">the funnel down.</text>
+
+        <text x="820" y="56" class="dg-s-ok">happy path</text>
+        <text x="820" y="134" class="dg-s-accent">editor's</text>
+        <text x="820" y="148" class="dg-s-accent">problem</text>
+        <text x="820" y="216" class="dg-s-flag">never the</text>
+        <text x="820" y="230" class="dg-s-flag">customer's</text>
+
+        <line x1="14" y1="288" x2="924" y2="288" class="dg-line dg-dash"/>
+        <text x="14" y="312" class="dg-cap">THE SEAM · ONE OPTION, TWO OWNERS</text>
+
+        <rect x="14" y="326" width="330" height="52" rx="7" class="dg-box"/>
+        <circle cx="42" cy="352" r="10" class="dg-plain"/>
+        <text x="64" y="348" class="dg-t">Gut — bloating, reactivity</text>
+        <text x="64" y="366" class="dg-s">the way food sits</text>
+        <circle cx="322" cy="352" r="9" class="dg-plain"/>
+
+        <path d="M150,326 L150,306" class="dg-line-accent"/>
+        <text x="158" y="312" class="dg-s-accent">label + sublabel — Storyblok, edit freely, no deploy</text>
+
+        <path d="M180,378 L180,398" class="dg-line-flag"/>
+        <text x="188" y="402" class="dg-s-flag">value <tspan class="mono" font-weight="700">gut_mucosal</tspan> — locked to the datasource. Engine trigger. Changing it is a PR, not a publish.</text>
+
+        <text x="600" y="326" class="dg-s">Result: Amelia rewrites every word in the</text>
+        <text x="600" y="342" class="dg-s">funnel on a Tuesday afternoon and ships it</text>
+        <text x="600" y="358" class="dg-s">herself. She cannot reorder the branches,</text>
+        <text x="600" y="374" class="dg-s">retire an option the engine depends on, or</text>
+        <text x="600" y="390" class="dg-s">edit a compliance line without review.</text>
+        <text x="600" y="410" class="dg-s-ok">That is the whole design goal.</text>
+      </svg>
+    </div>
+    <figcaption><b>Content in, logic out.</b> Storyblok owns the words; code owns the machine. The Zod parse at the fetch boundary is what makes that split enforceable rather than merely intended — without it, "content in the CMS" quietly becomes "routing in the CMS."</figcaption>
+  </figure>
+
+  <div class="tbl-shell">
+    <table>
+      <thead><tr><th style="width:34%">Concern</th><th style="width:22%">Lives in</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Headlines, subcopy, option labels</td><td><span class="v part">Storyblok</span></td><td>Pure copy. Iterating this without a deploy is the entire justification for the CMS.</td></tr>
+        <tr><td>Education screens, recognition lines</td><td><span class="v part">Storyblok</span></td><td>Copy plus a fire-condition reference. The condition itself is an enum the code understands.</td></tr>
+        <tr><td>10 reveal read variants</td><td><span class="v part">Storyblok</span></td><td>Long-form emotional copy, most likely thing to be A/B tested.</td></tr>
+        <tr><td>Benefit chips, card paragraphs</td><td><span class="v part">Storyblok</span></td><td>Still unwritten — see flag 04. CMS lets us ship the schema before the words exist.</td></tr>
+        <tr><td>Option → engine value binding</td><td><span class="v no">Locked datasource</span></td><td>Editable would mean a marketer can break routing. Bindable only, from a fixed list.</td></tr>
+        <tr><td>Screen order, branch graph</td><td><span class="v yes">Code</span></td><td>It's a state machine. Reordering it is a code change with a test run, not a publish.</td></tr>
+        <tr><td>Rules R1–R8, triggers, dedup</td><td><span class="v yes">Code · server</span></td><td>Client said so, and it must not ship to the browser regardless.</td></tr>
+        <tr><td>Answer → compound mapping</td><td><span class="v yes">Code · server</span></td><td>Tempting to CMS because it looks like data. Don't — it is the promotional-claim surface.</td></tr>
+        <tr><td>Prices, plan multipliers</td><td><span class="v yes">Code or billing</span></td><td>Never a CMS field a marketer can fat-finger. Consider reading from Stripe once billing exists.</td></tr>
+        <tr><td>"Peptide protocols are clinically recommended…"</td><td><span class="v yes">Code</span></td><td>Marked LOCKED and verbatim in the spec. Same for the "not a prescription" disclaimer. Compliance copy does not belong behind a publish button.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">07</span><span class="secrule"></span></div>
+  <h2>"There's no backend, right?"</h2>
+  <div class="col stack" style="margin-top:16px">
+    <p>Not quite. There is no <em>separate service</em> — no Nest app, no Railway box. But there is a server, and it is not optional. Next.js route handlers plus one Postgres database, deployed as part of the same Vercel app. Five reasons it can't be a pure client:</p>
+    <ul class="tight">
+      <li><strong>The engine can't ship to the browser.</strong> If the answer-to-compound map is in the JS bundle, anyone can read it out of devtools. That is the exact 503A promotional-claim exposure their clinical lead names in writing.</li>
+      <li><strong>Server-side conversion tracking is mandated.</strong> The copy layer says CAPI from the email event onward, with no health-adjacent parameters going to ad platforms. You cannot do that from a pixel.</li>
+      <li><strong>Save-progress needs a durable row</strong> keyed by a signed httpOnly cookie. localStorage alone dies on a cleared browser and can't move devices.</li>
+      <li><strong>The Bask handoff token must be signed server-side.</strong> The signing secret cannot live in the client.</li>
+      <li><strong>These answers are health data.</strong> Once tied to an email and posted to an EMR they are PHI in all but name. They should not sit in localStorage, appear in a URL, or land in a Sentry breadcrumb.</li>
+    </ul>
+    <p>On <em>where the engine should sit</em> — he asked for our view, so give him one: <strong>Node runtime route handler, not edge.</strong> It runs once per customer, after email capture, so latency is irrelevant; it needs database access and an outbound call to Bask; and edge would add constraints for no gain. Keep the quiz screens themselves static and cached at the edge — they're just CMS copy — and put the single engine call on Node.</p>
+    <p>Write the engine as a pure TypeScript module with no framework imports, taking an answers object and returning a shape. Then the 18-path test matrix in the mapping doc becomes its test suite, almost literally. That matrix is the most useful thing they've offered; ask for it early.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">08</span><span class="secrule"></span></div>
+  <h2>Stack calls</h2>
+  <p class="col" style="margin-top:16px">You asked whether to reach for Zod, forms, Zustand, React Query, shadcn. Here are the calls with the reasoning, so you can defend them rather than just apply them.</p>
+
+  <div class="tbl-shell">
+    <table>
+      <thead><tr><th style="width:20%">Tool</th><th style="width:14%">Call</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td>Zod</td><td><span class="v yes">Yes — 3 places</span></td><td>The CMS payload boundary, per-screen answer validation, and the handoff contract. The same per-screen schema validates the client input and the server POST, so there is one definition of a valid answer. This is the highest-leverage dependency in the list.</td></tr>
+        <tr><td>Zustand</td><td><span class="v yes">Yes</span></td><td>Fifteen screens with back navigation and a conditional branch. A client store makes back/forward and branch resolution instant on a phone. Use <code>persist</code> to sessionStorage as a fast local mirror — but the server row is the source of truth, and the store syncs to it on every answer.</td></tr>
+        <tr><td>TanStack Query</td><td><span class="v yes">Yes</span></td><td>House standard, and it earns its place here: autosave on every answer over a flaky mobile connection wants retry and deduping for free. Query keys follow the <code>[entity, action, ...filters]</code> convention.</td></tr>
+        <tr><td>React Hook Form</td><td><span class="v part">Three screens only</span></td><td>Twelve of the fifteen screens are card selects, not forms — RHF would be fighting the shape. Only name, the 90-day free text and email are real inputs. Use RHF with <code>zodResolver</code> there if it's the house standard; plain controlled inputs are equally defensible.</td></tr>
+        <tr><td>HeroUI v2</td><td><span class="v yes">Yes — restyled</span></td><td>House component library, React Aria underneath, so keyboard and screen-reader behaviour on the selects comes free. Restyle heavily through <code>classNames</code> slots — the SYNC design has its own visual language and we are not adopting HeroUI's.</td></tr>
+        <tr><td>Tailwind v4 + tailwind-variants</td><td><span class="v yes">Yes — this is the system</span></td><td>Design tokens lifted from Figma into <code>@theme</code>. Around twelve in-repo components carry the whole build: the bespoke pieces (screen shell, option card, glass panels, gradient layer) are ours, not a library's.</td></tr>
+        <tr><td>Server Actions</td><td><span class="v yes">Yes, for writes</span></td><td>Autosave, email submit, engine run. Colocated, typed end to end, no API surface to maintain. Route handlers only where an external caller needs a real endpoint — the Storyblok revalidate webhook.</td></tr>
+        <tr><td>Postgres</td><td><span class="v yes">Yes — Neon or Supabase</span></td><td>Sessions, answers, resume tokens. Check the region and whether a BAA is available before storing anything email-linked; see flag 07.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col stack" style="margin-top:30px">
+    <h3>The component kit, in full</h3>
+    <p>Twelve components carry ninety percent of the build. Naming them makes the estimate concrete: <code>ScreenShell</code> (gradient layer + progress header + back/close), <code>OptionCard</code>, <code>OptionGroup</code> (single and multi variants over Radix), <code>RecognitionLine</code> (the red bar), <code>EducationPanel</code> (the grey box), <code>PrimaryButton</code>, <code>TextField</code>, <code>ProgressHeader</code>, and on the reveal: <code>BenefitChip</code>, <code>ProtocolCard</code>, <code>PlanSelector</code>, <code>StickyFooter</code>. Build those properly in week one and the fifteen screens assemble quickly.</p>
+
+    <h3>The gradients</h3>
+    <p>You're right that they're the risky part of the design. They're soft organic mesh gradients that shift hue per section — cream and amber through the opening, warmer through goals, deeper rose in the branches. Three ways to build them, and only one is correct here:</p>
+    <ul class="tight">
+      <li><strong>Export from Figma as WebP or AVIF, one per section theme.</strong> Pixel-exact, 30–70KB each at 2×, <code>background-size: cover</code>, preload the first. Cross-fade between sections by stacking two layers and transitioning opacity. <strong>Do this.</strong></li>
+      <li>Hand-authored CSS — three or four <code>radial-gradient</code> blobs in a fixed layer under a <code>blur(80px)</code> filter. Tiny and animatable, but it will not match Figma, and a full-viewport blur filter is a real cost on a mid-range Android, which is what this audience is holding.</li>
+      <li>Canvas or WebGL. No. Battery and first-paint cost on a mobile-first paid-traffic funnel where every hundred milliseconds is conversion.</li>
+    </ul>
+    <p>One thing to check before you commit: in the Figma frames the text sits directly on the gradient with no scrim. On the lighter cream areas near-black type is fine, but check contrast on the deeper rose screens and hold the line at AA. The audience skews 35-plus, so don't let body text go below 16px anywhere.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">09</span><span class="secrule"></span></div>
+  <h2>Raise these on the call</h2>
+  <p class="col" style="margin-top:16px">Three of these block a credible quote. The rest are things a careful engineer notices and a client is glad to have heard early. None of them are reasons to walk away — this is a well-specified project by the standards of most leads.</p>
+
+  <div class="flags">
+    <div class="flag block">
+      <div class="flag-top"><span class="sev r">Resolved</span><h3>The reveal contradiction</h3></div>
+      <p>The copy layer puts compound names and prices in front of the customer pre-consult. The intake spec's clinical lead forbids exactly that. This is the difference between a full commerce page and a holding screen — most of the reveal build.</p>
+      <div class="ask"><b>Settled</b>Patrick chose the commerce page on the call, in his own words. His certification, his call. Worth holding in writing rather than only in a transcript, since the intake spec has Dr. Reid stating the opposite.</div>
+    </div>
+
+    <div class="flag block">
+      <div class="flag-top"><span class="sev r">Resolved</span><h3>Backend Mapping v2.1 received</h3></div>
+      <p>The document holding R1–R8, the lane triggers, the four shapes, the read-variant table, the handoff spec and the 18-path test matrix was not sent. Every page of what we did get depends on it. And "engine complete" means specified, not written — the copy layer says Zarar builds it.</p>
+      <div class="ask"><b>Closed</b>Document received and signed off. Two of our inferences were wrong and are corrected: the RESTORE blend is GHK-Cu and Epitalon (NAD+ is not in it), and the DEFINE cross-lane default is MOTS-c, not AOD-9604. One question remains — <em>The Quiz — FINAL v2.1</em> is named as paired source of truth and has not been supplied.</div>
+    </div>
+
+    <div class="flag block">
+      <div class="flag-top"><span class="sev b">Blocker 03</span><h3>There are no prices</h3></div>
+      <p>Every price in the spec is a literal <code>$X</code>. The plan selector, the running total and the sticky footer — the three elements called the conversion mechanism — are all priced surfaces with no numbers behind them.</p>
+      <div class="ask"><b>Ask</b>A price table: per compound and per blend, at 1, 3 and 6 months. And is the total additive across base plus supporting plus upsell, or priced per assembled stack? The running total implies additive; confirm it.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-top"><span class="sev w">Flag 04</span><h3>The reveal copy doesn't exist yet</h3></div>
+      <p>By their own document, Amelia still owes four base paragraphs, four benefit chips for every compound, base copy for eight single-only molecules, the supporting-protocol pairings and four upsell one-liners. That's roughly thirteen card variants of unwritten copy on the screen that matters most. "Finished designs and finished spec" isn't quite the position.</p>
+      <div class="ask"><b>Ask</b>Frame it as the Storyblok argument, not a complaint: we ship the reveal with the schema live and placeholders in place, Amelia fills it in herself without waiting on us. That's a selling point — use it.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-top"><span class="sev w">Flag 05</span><h3>Three naming systems that don't line up</h3></div>
+      <p>The quiz has five lanes: REPAIR, PERFORM, DEFINE, RESTORE, PT-141. The intake has six internal stacks: RECOVER, PERFORM, SCULPT, YOUTH, MIND, OPTIMIZE. And a third set of patient-facing blend names: APEX, IGNITE, RESTORE, AEON, DELTA. <code>RESTORE</code> means a lane in one and a product in another. There is no MIND lane in the quiz at all, and the intake flags its own OPTIMIZE lane as doing double duty and needing a split before launch.</p>
+      <div class="ask"><b>Ask</b>Who owns the mapping table between the quiz lanes and the intake stacks? Without it the token handoff sends values Bask can't route. This is a half-hour conversation now and a nasty integration bug later.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-top"><span class="sev w">Flag 06</span><h3>Save-progress can't do what he wants it to do</h3></div>
+      <p>He wants to recover people who bounce before email capture on Screen 9. But with no email and no phone before Screen 9, there is no channel to bring anyone back. Save-progress gets you same-device return via a cookie. It does not recover a bounce — nothing can, without contact details.</p>
+      <p>Also worth saying plainly: it's fifteen screens, not eleven, and five of those are education interstitials with no input and no data captured. On cold paid mobile traffic that's a lot of pure drop-off surface.</p>
+      <div class="ask"><b>Ask</b>Three real options. One, cookie plus server session for same-device resume — cheap, do it regardless. Two, an optional "save my progress" email ask around Screen 6, skippable, which is the only thing that creates a recovery channel before Screen 9. Three, fold the education screens inline rather than giving each its own step. Recommend one and two.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-top"><span class="sev w">Flag 07</span><h3>Eligibility is at the wrong end of the funnel</h3></div>
+      <p>The quiz deliberately has no consent wall — "eligibility lives in the clinical intake, after they care." But the intake's hard gates are age under 21, an uncovered state, pregnancy, and active cancer. So a customer can complete fifteen screens, hand over an email, see a personalised protocol with a price, click through — and get hard-blocked. Worse than a wasted click: you showed a compounded-drug recommendation to someone you were never permitted to treat.</p>
+      <div class="ask"><b>Ask</b>Move two cheap gates into the quiz — state of residence and 21-plus — on one early screen. State can double as personalisation so it doesn't read as friction. Leave pregnancy and cancer in the clinical intake where they belong. One screen of cost, and it removes the funnel's worst outcome.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-top"><span class="sev w">Flag 08</span><h3>These answers are health data</h3></div>
+      <p>Pre-consult marketing quiz or not: once an answer set is tied to an email and posted into an EMR, it behaves like PHI. That has build consequences that are cheap now and expensive to retrofit — database region and whether a BAA is available, no answer payloads in logs or Sentry, retention policy, and never putting a lane or an answer in a URL or a page title where it leaks through the referrer.</p>
+      <div class="ask"><b>Ask</b>Confirm who is accountable for the data before the handoff — SYNC or Bask. And keep the session id in the URL opaque: <code>/quiz/r/a8f3…</code>, never <code>/quiz/reveal?lane=PT-141</code>.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-top"><span class="sev w">Flag 09</span><h3>Two unknowns that change the repo on day one</h3></div>
+      <p>"You'll be working alongside our current site, not replacing it" — but what is the current site? If it's already Next.js on Vercel, the quiz is a route segment sharing tokens and the Storyblok space. If it's Webflow or WordPress, it's a separate app on a subdomain with cookie-domain and analytics stitching to sort out. Separately, the Bask contract is undefined — their own checklist lists three unconfirmed dependencies, including the patient-creation endpoint schema.</p>
+      <div class="ask"><b>Ask</b>What's the current site built on, and same repo or subdomain? For Bask, build behind an adapter interface with a stub from the start so an undefined contract never blocks the front end.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">10</span><span class="secrule"></span></div>
+  <h2>Build order</h2>
+  <p class="col" style="margin-top:16px">Sequenced so the unknowns sit at the front and the reveal — the piece most likely to change — sits behind everything that doesn't depend on it.</p>
+
+  <div class="phases">
+    <div class="ph">
+      <div class="ph-n">Phase 0<span>before code</span></div>
+      <div><h4>Unblock</h4><p>Get Backend Mapping v2.1, the price table and the lane-to-stack mapping. Resolve the reveal contradiction. Answer the repo question. Nothing here is our work, and all of it gates a real estimate.</p></div>
+    </div>
+    <div class="ph">
+      <div class="ph-n">Phase 1<span>~1 week</span></div>
+      <div><h4>Foundations</h4><p>Next.js App Router, Tailwind v4 tokens lifted from Figma, the twelve-component kit, the gradient layer. Storyblok space, content types, the locked engine-values datasource, the Zod boundary, draft preview and webhook revalidation.</p></div>
+    </div>
+    <div class="ph">
+      <div class="ph-n">Phase 2<span>~1.5 weeks</span></div>
+      <div><h4>The flow</h4><p>State machine, all fifteen screens, branch routing, recognition lines, education screens. Zustand mirror, autosave, cookie resume. This is the bulk of the screen count and the least risky part of the build.</p></div>
+    </div>
+    <div class="ph">
+      <div class="ph-n">Phase 3<span>~1 week</span></div>
+      <div><h4>Engine</h4><p>Pure TypeScript module, server-only, with the 18-path matrix as its test suite. Runs behind a server action. If Zarar owns this, we build the adapter and the mock instead and this phase shrinks.</p></div>
+    </div>
+    <div class="ph">
+      <div class="ph-n">Phase 4<span>~1.5 weeks</span></div>
+      <div><h4>The reveal</h4><p>Both templates as separate routes. Plan selector, running total, sticky footer, conditional supporting and upsell cards, swap and remove controls. Sized on the assumption that flag 01 resolves in favour of the commerce page — if it doesn't, this phase roughly fifths.</p></div>
+    </div>
+    <div class="ph">
+      <div class="ph-n">Phase 5<span>~0.5 week</span></div>
+      <div><h4>Handoff &amp; tracking</h4><p>Signed token into the Bask adapter, server-side CAPI events, PHI review of logs and URLs, analytics stitching with the main site.</p></div>
+    </div>
+  </div>
+
+  <div class="col" style="margin-top:26px">
+    <div class="note good">
+      <span class="lbl">How to play the call</span>
+      <p>Don't open with the problems. Open by showing you've read all three documents more carefully than most agencies would — the fifteen-screen count, the four shapes and two templates, the fact that the upsell fires on exactly one shape. That earns the right to raise flag 01.</p>
+      <p>Then be straight about it: <em>we can't responsibly quote the reveal until you tell us whether the customer sees a compound name and a price.</em> That's not a hedge, it's the single biggest line item in the build, and a client who hears it from us before the contract will trust the numbers that follow.</p>
+      <p>Quote phases 1 through 3 with confidence — they're well-specified and low-risk. Put phase 4 behind the answer to flag 01, and offer the ongoing retainer around Storyblok, copy iteration and A/B testing the reveal, which is where the recurring work genuinely is.</p>
+    </div>
+  </div>
+</section>
+
+<div class="endrule">SYNC Health · quiz &amp; reveal · engineering read of Copy Layer v2.1, Intake Build Spec v1.0 and the sales handover · prepared for the scoping call</div>
+
+</div>
+</body>
+</html>
