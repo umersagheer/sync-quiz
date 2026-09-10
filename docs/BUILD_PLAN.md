@@ -72,7 +72,17 @@ the build follows, and the Figma frame names agree with it.
 ## Design
 
 File: `https://www.figma.com/design/kxBzmwCi8NCZR69YeybQOm/Sync.-Website`
-File key `kxBzmwCi8NCZR69YeybQOm` · Quiz page `1:772` · access confirmed via Figma MCP.
+File key `kxBzmwCi8NCZR69YeybQOm` · Quiz page `1:772`.
+
+> **The Figma MCP quota is spent — do not try it again.** The View seat on the
+> Professional plan hit its tool-call limit during Phase 0 and it does not reset usefully.
+> `get_variable_defs`, `get_screenshot` and `get_metadata` all fail. Design context comes
+> from **screenshots the client-side team exports**, which Umer has offered to supply.
+>
+> When Phase 4 starts, ask for specific frames rather than all twenty-two: the shared
+> screens plus Branch A (branches B–E reuse Branch A's structure), the three reveal
+> variants, and — easy to forget — the sticky-footer frame `1:1099`, which is the only
+> record of the pin-on-scroll behaviour and the condensed header. Ask for 2x or better.
 
 Use the `figma-to-code-react` skill when building any of these frames.
 
@@ -307,6 +317,39 @@ Typed content schema and the real transcribed copy for all fifteen screens, the 
 screens, the recognition lines and the ten reveal read variants.
 
 Depends on: nothing.
+
+**Status: done.** 117 tests green. `lib/shared/content/` — `screens.content.ts` (S1–S9),
+`branches.content.ts` (the five branches, their recognition rules and education panels),
+`reveal.content.ts` (all ten reads plus the reveal chrome), `compounds.content.ts` (card
+copy per protocol). Schema in `lib/shared/types/content.types.ts`.
+
+- **Option values are typed against the engine's own unions.** A screen offering a value
+  the engine has never heard of is a compile error, not a runtime surprise — verified by
+  deliberately breaking one. That bond is why the content files import from `quiz.types`.
+- **Unwritten copy is a discriminated union, not a null.** `{ status: 'pending' }` forces
+  a component to branch rather than silently rendering a blank as signed copy.
+- **Nothing was invented.** Card chips and paragraphs are therapeutic claims about
+  compounded 503A molecules; Reid signs the framing and Amelia signs the paragraphs. Only
+  the two worked examples the copy layer actually provides (REPAIR base, NAD+ supporting)
+  are `written`.
+- Recognition lines carry their own firing conditions, including the combinations that
+  deliberately fire nothing (REPAIR single box, RESTORE `circadian` alone).
+- A test guards against HTML entities and curly quotes in copy strings. These are TS
+  string literals, not JSX, so `&apos;` would reach the customer verbatim — that slip
+  happened three times while transcribing before the guard existed.
+
+**`docs/COPY_BACKLOG.md` is the client-facing ask** — 3 blend cards, 14 compound cards, 4
+pairs-well-with one-liners, and the entire price table including the plan-length model.
+Two questions in it change the size of that job:
+
+1. Are card paragraphs written **per compound or per answer pattern**? §5.2 asks for a
+   paragraph tying the compound to "the customer's specific answers", and the worked
+   example is written for one combination. One reading is ~17 paragraphs; the other needs
+   templating and is far larger.
+2. **Do cards differ by position?** NAD+'s only paragraph is written as a supporting
+   protocol ("Paired with REPAIR…"), but Lane D returns NAD+ as a _base_ for
+   `cellular_energy` alone, where that sentence does not work. Same for BPC-157, MOTS-c,
+   Sermorelin and GHK-Cu, all of which appear in both positions.
 
 ## Phase 3 — Flow and state
 
