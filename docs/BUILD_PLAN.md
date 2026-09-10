@@ -36,12 +36,12 @@ bundle.
 
 ## Reference material
 
-| File                                                      | What it is                                                                                                                                     |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `reference/SYNC_The_Quiz_Copy_Layer_v2_1.docx.txt`        | Customer-facing copy, screen order, reveal spec. **Wins on copy, screens, trigger outcomes and read logic wherever the two docs diverge.**     |
-| `reference/SYNC_The_Quiz_Backend_Mapping_v2_1.docx.txt`   | Engine resolution: R1–R8, R7 substitutions, per-lane triggers, four shapes, handoff payload, 18-path test matrix. Signed off, zero open items. |
-| `reference/SYNC_Peptide_Intake_Build_Spec_v1.0_DRAFT.pdf` | The clinical intake that follows our handoff. Not our build — read for gates, formulary and the handoff contract.                              |
-| `reference/SYNC_Quiz_Build_Brief.html`                    | Engineering read of the above: architecture, flow diagrams, open questions.                                                                    |
+| File                                                      | What it is                                                                                                                                                      |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `reference/SYNC_The_Quiz_Copy_Layer_v2_1.docx.txt`        | Customer-facing copy, screen order, reveal spec. **Wins on copy, screens and reveal layout.** Its inline trigger summaries are lossy — see Document authority.  |
+| `reference/SYNC_The_Quiz_Backend_Mapping_v2_1.docx.txt`   | Engine resolution: R1–R8, R7 substitutions, per-lane triggers, four shapes, handoff payload, 18-path test matrix. **Governs all engine mechanics.** Signed off. |
+| `reference/SYNC_Peptide_Intake_Build_Spec_v1.0_DRAFT.pdf` | The clinical intake that follows our handoff. Not our build — read for gates, formulary and the handoff contract.                                               |
+| `reference/SYNC_Quiz_Build_Brief.html`                    | Engineering read of the above: architecture, flow diagrams, open questions.                                                                                     |
 
 ### Document authority
 
