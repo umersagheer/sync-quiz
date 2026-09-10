@@ -358,13 +358,50 @@ screens · TanStack Query mutations · session persistence · API routes.
 
 Depends on: Phases 1–2.
 
+**Status: done.** 150 tests green. The quiz is now takeable end to end — sixteen screens,
+the email gate, and a reveal computed by the real engine.
+
+- `lib/client/quiz-flow/steps.ts` — the step machine. The step list is a function of the
+  lane, since PT-141 has no discriminator and runs one step shorter. One
+  `Record<StepId, (draft) => boolean>` both enables the Next button and powers the guard.
+- **Real routes** (`/quiz/[step]`), not client-side step state, so the back button walks
+  the funnel instead of leaving it. A deep link past where the answers reach redirects to
+  the furthest incomplete step.
+- `lib/client/stores/quiz.store.ts` — Zustand persisted to **`sessionStorage`, not
+  `localStorage`**. The answers are health-adjacent (sleep, stress, sexual function,
+  GLP-1 use); sessionStorage survives a refresh and clears when the tab closes.
+- **One endpoint**, `POST /api/quiz/resolve`: Zod validates, the engine resolves, no
+  controller layer. It is the only way a reveal can exist, because the engine is
+  `server-only`.
+- Components in `components/quiz/` are **semantic but unstyled** — real
+  `fieldset`/`legend`/radio/checkbox, real labels, visible focus. Phase 4 applies the
+  design to these rather than rebuilding them.
+
+**Bug the walkthrough test caught: PT-141 returned 400 for every customer.** That lane has
+no discriminator screen so a real client never sets the field, but the schema required the
+array to be present. One lane in five was broken end to end, and inspection had not found
+it. The schema now defaults it — pinned by a regression test.
+
+**Second fix: quiz screens were serving an empty shell.** Gating the render on store
+hydration meant the server sent no content and the first paint was blank — on the welcome
+screen, that is the top of the funnel rendering nothing until JS arrives. The hydration
+gate now covers only the redirect.
+
+Not verified by me: interactive click-through in a browser. The Chrome extension is not
+connected in this environment. Routes, semantics and the API were verified over HTTP, and
+the walkthrough test drives all five lanes end to end — but someone should click it.
+
 ## Phase 4 — Screens
 
-`ScreenShell`, `OptionCard`, `OptionGroup`, `ProgressHeader`, `RecognitionLine`,
-`EducationPanel`, `TextField`, `PrimaryButton`. Then the fifteen screens.
+Apply the Figma design to the components Phase 3 built — `ScreenShell`, `OptionGroup`,
+`RecognitionLine`, `EducationPanel`, `TextField`, `PrimaryButton` — and add
+`ProgressHeader`. The structure and accessibility already exist; this phase is the visual
+layer plus the placeholder-token sweep.
 
-Option cards are real radio and checkbox inputs styled with `peer-checked:`, not divs
-tracking state — keyboard and screen-reader behaviour comes free that way.
+Option cards are already real radio and checkbox inputs — keep them that way and style via
+`peer-checked:` rather than replacing them with divs.
+
+**Blocked on design screenshots** (the Figma MCP quota is gone — see Design above).
 
 Depends on: Phase 0 tokens.
 

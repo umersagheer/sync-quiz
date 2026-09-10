@@ -119,3 +119,20 @@ describe('quiz answers schema', () => {
     expect(quizAnswersSchema.safeParse({ ...base, email: 'not-an-email' }).success).toBe(false)
   })
 })
+
+/**
+ * Regression: PT-141 has no discriminator screen, so a real client never sets the field.
+ * Requiring it to be present — even as an empty array — meant every customer in that
+ * lane got a 400 and no reveal. Caught by the walkthrough test, not by inspection.
+ */
+describe('PT141 discriminator', () => {
+  it('accepts a submission with no discriminator field at all', () => {
+    const base = answers({ lane: 'PT141', discriminator: [], qualifier: 'desire' })
+    const { discriminator: _omitted, ...withoutDiscriminator } = base
+
+    const result = quizAnswersSchema.safeParse(withoutDiscriminator)
+
+    expect(result.success).toBe(true)
+    expect(result.success && result.data.discriminator).toEqual([])
+  })
+})

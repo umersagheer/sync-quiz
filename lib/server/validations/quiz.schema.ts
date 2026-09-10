@@ -88,7 +88,12 @@ export const quizAnswersSchema = z
     z.object({
       ...common,
       lane: z.literal('PT141'),
-      discriminator: z.array(z.never()).length(0),
+      // Defaulted, not merely required-and-empty. This lane has no discriminator screen
+      // at all, so a real client never sets the field — requiring it to be present sent
+      // every PT-141 customer a 400. "No discriminator" and "empty discriminator" are
+      // the same thing here, and the boundary should say so rather than relying on the
+      // caller to send an empty array it was never asked for.
+      discriminator: z.array(z.never()).length(0).default([]),
       qualifier: z.enum(['desire', 'arousal', 'both']),
     }),
   ])
