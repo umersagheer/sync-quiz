@@ -76,8 +76,16 @@ export function PlanSelector({
 
       {/* §5.4 — verbatim, do not reword. The frame sets it on the chip cream with a
           short rounded accent bar inset from the edge, not a full-height border. */}
-      <div className="bg-chip flex items-stretch gap-3.5 rounded-[14px] p-[18px]">
-        <span aria-hidden="true" className="bg-accent my-[-4px] w-[3px] shrink-0 rounded-full" />
+      <div className="bg-chip relative rounded-[14px] p-[18px]">
+        {/*
+          The bar sits flush to the box's left edge, not inside its padding — in the
+          frame it is a sibling of the box rather than a child, so the 18px padding
+          never applies to it. Inset 14px from the top and 12px from the bottom.
+        */}
+        <span
+          aria-hidden="true"
+          className="bg-accent absolute top-[14px] bottom-3 left-0 w-[3px] rounded-full"
+        />
         <p className="text-card-muted-foreground font-display text-[0.8125rem] leading-[1.1875rem]">
           {PLAN_SELECTOR.clinicalLine}
         </p>
@@ -89,7 +97,12 @@ export function PlanSelector({
 /** Shape 1 only — the trust artefact of the whole system. */
 export function TrustBlock() {
   return (
-    <section className="bg-chip flex flex-col gap-3 rounded-[14px] p-[18px] pl-5">
+    <section className="bg-chip relative flex flex-col gap-3 rounded-[20px] p-5">
+      {/* This bar is inset 8px, unlike the locked line's — the frame treats them differently. */}
+      <span
+        aria-hidden="true"
+        className="bg-accent absolute top-5 left-2 h-[54px] w-[3px] rounded-full"
+      />
       <SectionLabel>{TRUST_BLOCK.eyebrow}</SectionLabel>
       <h2 className="font-display text-card-foreground text-[1.25rem] leading-[1.5rem] font-medium">
         {TRUST_BLOCK.heading}
