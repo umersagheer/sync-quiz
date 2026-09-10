@@ -100,7 +100,7 @@ export function RevealScreen() {
 
   return (
     <div className="bg-reveal-page min-h-dvh">
-      <CondensedHeader stackName={stackName} />
+      <CondensedHeader stackName={stackName} onDismiss={startOver} />
 
       <div className="mx-auto w-full max-w-[430px] pb-[168px]">
         <ReadBand
@@ -108,6 +108,7 @@ export function RevealScreen() {
           lane={result.lane}
           readVariant={result.readVariant}
           answerCount={11}
+          shape={result.shape}
           onDismiss={startOver}
         />
 

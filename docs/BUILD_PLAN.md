@@ -494,6 +494,31 @@ so Amelia is briefed for the larger job.
    produces it. Related: because every R8 default is unpriced, **no Shape 3–4 path is
    fully priced** — only Shape 1 and Shape 2 in the Recovery lane show a complete total.
 
+### Design-review pass (post Phase 5)
+
+Umer reviewed the built reveal against the frames and found real gaps. Fixed:
+
+- **The sticky footer was broken**, not merely off. Price and CTA were laid out as one
+  row, so the total collapsed under the button and the two overlapped. The frame stacks
+  them vertically: a price line above a full-width pill, full-bleed with only the top
+  corners rounded, on a `GLASS` backdrop blur.
+- **The read band cut hard against the page.** The frame has a `Fade to cream` layer
+  across the bottom third of a fixed 540px band — that is why its marker line is set in
+  _dark_ text, since the background behind it has already become cream. The band was
+  content-height, so there was no room for the fade to happen at all.
+- **Benefit chips carry icons** — four marks shared across compounds, keyed by chip label
+  rather than by molecule, because the frames reuse them that way.
+- The condensed header gained its dismiss control and a translucent-cream backdrop blur.
+- `DEFAULTED TO 3 MONTHS` is accent, not muted; the footer's plan label is uppercase.
+- The locked clinical line and the trust block sit on the chip cream with an inset accent
+  bar, not a white card with a full-height border.
+- The read marker varies by shape: `BASED ON n ANSWERS · LANE`, `BLEND`, or `SINGLE`.
+
+Two of these were caused by the same mistake worth naming: a `@utility` rewrite silently
+failed to apply because Prettier had reformatted the block and the exact-match replace
+missed. The CSS kept compiling and the page kept rendering — just with the old rule. When
+changing a utility, check the built CSS actually contains the new declaration.
+
 ### The reset bug
 
 Finishing the quiz left the answers in `sessionStorage`, so returning to `/` bounced

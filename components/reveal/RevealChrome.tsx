@@ -70,14 +70,18 @@ export function PlanSelector({
         </div>
       </div>
 
-      <p className="text-card-faint-foreground font-mono text-[0.625rem] tracking-[0.08em]">
+      <p className="text-accent font-mono text-[0.59375rem] font-medium tracking-[0.06em]">
         {REVEAL_CHROME.planDefaultNote}
       </p>
 
-      {/* §5.4 — verbatim, do not reword. */}
-      <p className="border-accent bg-card text-card-muted-foreground rounded-field font-display border-l-2 px-4 py-3 text-[0.8125rem] leading-[1.1875rem]">
-        {PLAN_SELECTOR.clinicalLine}
-      </p>
+      {/* §5.4 — verbatim, do not reword. The frame sets it on the chip cream with a
+          short rounded accent bar inset from the edge, not a full-height border. */}
+      <div className="bg-chip flex items-stretch gap-3.5 rounded-[14px] p-[18px]">
+        <span aria-hidden="true" className="bg-accent my-[-4px] w-[3px] shrink-0 rounded-full" />
+        <p className="text-card-muted-foreground font-display text-[0.8125rem] leading-[1.1875rem]">
+          {PLAN_SELECTOR.clinicalLine}
+        </p>
+      </div>
     </section>
   )
 }
@@ -85,7 +89,7 @@ export function PlanSelector({
 /** Shape 1 only — the trust artefact of the whole system. */
 export function TrustBlock() {
   return (
-    <section className="border-accent flex flex-col gap-3 border-l-2 pl-4">
+    <section className="bg-chip flex flex-col gap-3 rounded-[14px] p-[18px] pl-5">
       <SectionLabel>{TRUST_BLOCK.eyebrow}</SectionLabel>
       <h2 className="font-display text-card-foreground text-[1.25rem] leading-[1.5rem] font-medium">
         {TRUST_BLOCK.heading}
@@ -105,7 +109,7 @@ export function TrustBlock() {
 /** Shape 2 only. The single AOV path in the whole reveal — there is no generic "add". */
 export function PairsWellWithCard({ added, onAdd }: { added: boolean; onAdd: () => void }) {
   return (
-    <article className="bg-card text-card-foreground rounded-option border-card-hairline flex flex-col gap-3 border p-5">
+    <article className="bg-chip text-card-foreground rounded-option flex flex-col gap-3 p-5">
       <p className="text-accent font-mono text-[0.5625rem] font-medium tracking-[0.08em]">
         {PAIRS_WELL_WITH_CARD.eyebrow}
       </p>

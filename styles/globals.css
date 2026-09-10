@@ -59,6 +59,8 @@
    */
   /* The reveal's page ground below the read band — the "fade to cream". */
   --color-reveal-page: #fcf8f1;
+  /* The read band's eyebrow is a warmer peach than the quiz's accent tint. */
+  --color-read-eyebrow: #ffb79e;
   --color-card: #ffffff;
   --color-card-foreground: #1d1d1b;
   --color-card-muted-foreground: rgb(29 29 27 / 0.72);
@@ -146,17 +148,26 @@
  */
 @utility reveal-band {
   background-color: var(--color-card-foreground);
+  /* Layer order matters: the first image paints on top. Fade to cream first, then the
+     dimming scrim, then the warm orb, then the texture underneath. */
   background-image:
     linear-gradient(
       to bottom,
-      rgb(29 29 27 / 0.55) 0%,
-      rgb(46 15 6 / 0.4) 45%,
-      rgb(29 29 27 / 0.82) 100%
+      rgb(252 248 241 / 0) 58%,
+      rgb(252 248 241 / 0.72) 82%,
+      rgb(252 248 241 / 1) 100%
     ),
+    linear-gradient(
+      to bottom,
+      rgb(29 29 27 / 0.56) 0%,
+      rgb(29 29 27 / 0.44) 40%,
+      rgb(29 29 27 / 0.66) 100%
+    ),
+    radial-gradient(60% 34% at 50% 18%, rgb(255 106 43 / 0.45) 0%, rgb(255 106 43 / 0) 70%),
     url('/bg/molten.webp');
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover, cover;
+  background-size: cover, cover, cover, cover;
 }
 
 /** The welcome screen sits on a warmer, more saturated variant of the same idea. */

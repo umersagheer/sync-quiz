@@ -8,6 +8,8 @@ import Image from 'next/image'
 import { BLEND_COPY, COMPOUND_COPY } from '@/lib/shared/content/compounds.content'
 import { BRANCHES } from '@/lib/shared/content/branches.content'
 
+import { chipIcon } from './ChipIcons'
+
 export type CardRole = 'base' | 'adjunct'
 
 const copyFor = (protocol: Protocol): CompoundCopy | undefined =>
@@ -72,14 +74,19 @@ export function ProtocolCard({
 
       {copy?.card.status === 'written' ? (
         <ul className="grid grid-cols-2 gap-2">
-          {copy.card.chips.map((chip) => (
-            <li
-              key={chip}
-              className="bg-chip rounded-field font-display px-3 py-2 text-[0.75rem] leading-[1rem] font-medium"
-            >
-              {chip}
-            </li>
-          ))}
+          {copy.card.chips.map((chip) => {
+            const Icon = chipIcon(chip)
+
+            return (
+              <li
+                key={chip}
+                className="bg-chip rounded-field font-display flex items-center gap-2 px-3 py-2.5 text-[0.75rem] leading-[1rem] font-medium"
+              >
+                <Icon className="text-accent shrink-0" />
+                <span className="min-w-0">{chip}</span>
+              </li>
+            )
+          })}
         </ul>
       ) : null}
 
