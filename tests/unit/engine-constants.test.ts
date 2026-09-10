@@ -10,8 +10,8 @@ import {
   LANE_FALLBACK_READ,
   PAIRS_WELL_WITH,
   R7_SUBSTITUTIONS,
-} from '@/lib/shared/constants/engine.constants'
-import { FORMULARY } from '@/lib/shared/constants/formulary.constants'
+} from '@/lib/server/constants/engine.constants'
+import { FORMULARY } from '@/lib/server/constants/formulary.constants'
 
 const LANES: Lane[] = ['REPAIR', 'PERFORM', 'DEFINE', 'RESTORE', 'PT141']
 const BLENDS: BlendId[] = ['REPAIR', 'PERFORM', 'DEFINE', 'RESTORE']

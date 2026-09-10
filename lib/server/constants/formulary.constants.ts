@@ -1,4 +1,6 @@
-import type { Compound } from '../types/engine.types'
+import 'server-only'
+
+import type { Compound } from '@/lib/shared/types/engine.types'
 
 /**
  * Formulary clearance.

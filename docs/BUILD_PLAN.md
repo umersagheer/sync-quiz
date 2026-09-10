@@ -45,10 +45,26 @@ bundle.
 
 ### Document authority
 
-Backend Mapping states it explicitly: where it and the customer-facing doc diverge, the
-customer-facing doc wins — on copy, screens, result mapping, trigger outcomes and read logic.
-Backend Mapping is authoritative only where the copy layer is silent, which is most of the
-engine internals (R7 substitutions, R8 defaults, blend compositions, shape assembly).
+**Corrected in Phase 1.** This section previously read that the copy layer wins on result
+mapping, trigger outcomes and read logic. That is wrong, and it matters, because it would
+have pointed the engine at the weaker of the two documents.
+
+Backend Mapping's precedence clause names **`The Quiz — FINAL v2.1`** — a document that
+has never been supplied and is _not_ the copy layer. The copy layer describes itself, twice
+and explicitly, as sitting on top of the engine spec with "every trigger, every rule
+(R1–R8), every substitution unchanged", and says engine logic is built against Backend
+v2.1 while it "governs the words and the reveal layout".
+
+So:
+
+- **Backend Mapping v2.1 governs engine mechanics** — lane triggers, rules, substitutions,
+  shape assembly, read selection.
+- **The copy layer governs copy, screen order and reveal layout.**
+
+Where the copy layer's inline "Trigger LOCKED" lines differ from Backend, they are lossy
+restatements rather than overrides. Both apparent gaps in them — REPAIR one box with
+`inflammatory_intermittent`, and a PERFORM single box that is not `recovery_lag` — are
+fully resolved by Backend Lane A row 2 and Lane B row 5. Nothing is genuinely undefined.
 
 Screen numbering differs between the two documents. The copy layer's numbering is the one
 the build follows, and the Figma frame names agree with it.
@@ -124,6 +140,33 @@ The sticky-footer frame also shows a **condensed header** that pins on scroll, c
 | Full price table — design carries only the Recovery lane              | Phase 5, other lanes                                                                   |
 | Reveal card copy for lanes B–E — 4 chips and a paragraph per compound | Phase 2 content                                                                        |
 | `The Quiz — FINAL v2.1`                                               | Named as paired source of truth; not supplied. The copy layer appears to supersede it. |
+
+### Secondary goals have no defined result above one — raise with the client
+
+The highest-impact open item found in Phase 1, because it affects what a real customer
+sees rather than an unreachable branch.
+
+The secondary-goals screen is "MULTI-SELECT, NO RANKING" across the four non-primary
+goals, with **no cap stated**, and tells the customer "anything you pick becomes part of
+what we build". But §4 defines shapes for zero or one secondary only, the reveal draws
+exactly one supporting protocol card, and R3 caps the stack at one blend. A customer who
+ticks three goals has no defined result.
+
+Built behaviour: resolve **one** secondary, taken in the goal screen's own lane order
+(REPAIR → PERFORM → DEFINE → RESTORE → PT141), and pass the **full** array through to the
+handoff so the clinician still sees everything the customer asked for.
+
+Ask whether the screen should cap selection at one — which is probably the better fix,
+since the current copy promises something the reveal cannot deliver — or whether an
+explicit priority order should be specified.
+
+### `sex_at_birth` is collected for the read but no read uses it
+
+§6 lists it as feeding "clinical accuracy of the read", and the copy layer calls it
+"clinical input for the read logic and intake dosing". None of the ten read variants
+reference sex in their trigger or their copy. It is genuinely needed for intake dosing, so
+it stays in the payload — but confirm whether a sex-varying read was intended and dropped,
+or whether the description is just loose.
 
 ### Spec defect found in Backend Mapping §2A — raise with the client
 
@@ -230,7 +273,33 @@ reports it rather than letting a duplicate molecule reach a customer.
 
 Depends on: nothing. Server-side only — the answer-to-compound mapping never reaches the browser.
 
-Status: types and constants written.
+**Status: done.** 79 tests green; `bun run verify` and `bun run build` pass.
+
+- `lib/server/services/engine/` — `engine.service.ts` (entry), `lane-resolution.ts` (§3),
+  `assembly.ts` (§4 + R3–R8), `read-variant.ts` (§5).
+- `lib/server/validations/quiz.schema.ts` — Zod, discriminated on lane.
+- The mapping tables **moved** from `lib/shared/constants/` to `lib/server/constants/`.
+  They are answer→compound mappings, which is the thing that must not reach the browser;
+  leaving them in `shared` made the boundary a convention rather than a fact. Every engine
+  module now imports `server-only`, so a client component importing one **fails the build**
+  — verified by deliberately doing it. Types stay in `lib/shared/`: a string union is not a
+  promotional claim, and the reveal needs them.
+- Tests: the §7 eighteen-path matrix, lane edge cases, read-variant selection and
+  precedence, schema validation, and an **exhaustive sweep of all 57,600 valid answer
+  combinations** asserting §7A's claims — every path resolves, no duplicate molecule in a
+  stack, never two blends, no GLP-1 inside a blend, exactly one read.
+- Vitest needs `ssr.resolve.conditions: ['react-server', …]` so `server-only` resolves to
+  its empty module in tests. Without it every engine test fails at import.
+
+Two rules are implemented but unreachable, both pinned dead by test so that a future
+change reports itself rather than quietly coming alive: **R7** (see §2A defect above) and
+**Lane C's "2+ boxes" row**, which cannot fire while the pinch test stays single-select.
+
+`QuizAnswers` keeps `discriminator` and `qualifier` as flat unions rather than a
+discriminated union, so a half-finished quiz stays expressible while the customer is
+answering it. The cost is that cross-lane mismatches are not a compile error, which is
+exactly why the Zod schema is discriminated — and why a type-level guard in
+`quiz.schema.ts` fails the typecheck if the two ever drift apart.
 
 ## Phase 2 — Content layer
 

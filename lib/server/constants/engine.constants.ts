@@ -1,5 +1,7 @@
-import type { Lane } from '../types/quiz.types'
-import type { BlendId, Compound, ReadVariantId } from '../types/engine.types'
+import 'server-only'
+
+import type { Lane } from '@/lib/shared/types/quiz.types'
+import type { BlendId, Compound, ReadVariantId } from '@/lib/shared/types/engine.types'
 
 export const LANE_BLEND: Record<Lane, BlendId | null> = {
   REPAIR: 'REPAIR',

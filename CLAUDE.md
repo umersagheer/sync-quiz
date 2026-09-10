@@ -23,8 +23,8 @@ TypeScript is pinned to 5.9.3 on purpose: 7.x is `latest`, but
 ```
 app/            App Router. Server Components by default.
 lib/client/     Browser-only: stores, queries, client services, form schemas
-lib/server/     Server-only: the engine, services, request validation
-lib/shared/     Types, constants, utils used by both sides
+lib/server/     Server-only: the engine, its lookup tables, request validation
+lib/shared/     Types and utils used by both sides
 styles/         globals.css — the @theme token block
 tests/          Vitest. Not co-located.
 docs/           BUILD_PLAN.md and the client's reference material
