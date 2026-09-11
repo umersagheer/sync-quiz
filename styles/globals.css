@@ -240,15 +240,25 @@
 }
 
 /**
- * The "more below" cue on a step whose options overflow the viewport.
+ * The cue that a step's content continues past its scroller, at either edge.
  *
  * A mask rather than an overlaid gradient strip: the ground is a photographic texture,
  * so a solid fade would have to match it exactly and would break the moment the gradient
- * stops move. `ScreenShell` applies this only while the scroller is genuinely clipped —
- * left on permanently it would blur the last option on every screen that already fits.
+ * stops move. `ScreenShell` applies this only while an edge is genuinely clipped — left
+ * on permanently it would blur the last option on every screen that already fits, and a
+ * mask is a compositing layer this doesn't need to keep alive.
+ *
+ * Both lengths default to zero and are set by class, so one utility covers top-only,
+ * bottom-only and both without three variants of the same gradient.
  */
-@utility quiz-scroll-clipped {
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent 100%);
+@utility quiz-scroll-fade {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--scroll-fade-top, 0px),
+    #000 calc(100% - var(--scroll-fade-bottom, 0px)),
+    transparent 100%
+  );
 }
 
 body {

@@ -65,10 +65,10 @@ export function ScreenShell({
   sheet,
 }: ScreenShellProps) {
   const scroller = useRef<HTMLDivElement>(null)
-  const [clipped, setClipped] = useState(false)
+  const [clipped, setClipped] = useState({ top: false, bottom: false })
 
   /**
-   * Whether content continues below the fold.
+   * Which edges have content beyond them.
    *
    * The frames carry no "more below" cue because nothing in them overflows, so the fade
    * is ours. It has to be measured rather than styled: CSS cannot ask whether an element
@@ -80,9 +80,12 @@ export function ScreenShell({
 
     if (!element) return
 
-    const remaining = element.scrollHeight - element.clientHeight - element.scrollTop
+    const scrollable = element.scrollHeight - element.clientHeight
 
-    setClipped(element.scrollHeight - element.clientHeight > 1 && remaining > 2)
+    setClipped({
+      top: element.scrollTop > 2,
+      bottom: scrollable > 1 && scrollable - element.scrollTop > 2,
+    })
   }, [])
 
   useEffect(() => {
@@ -108,7 +111,7 @@ export function ScreenShell({
         data-register={register}
         className="quiz-ground grid h-dvh grid-rows-[auto_minmax(0,1fr)]"
       >
-        {header ? <div className={cn(COLUMN, 'pt-[14px]')}>{header}</div> : <div />}
+        {header ? <div className={cn(COLUMN, 'pt-[14px] pb-4')}>{header}</div> : <div />}
         <div className="mx-auto flex min-h-0 w-full max-w-[430px] flex-col justify-end">
           {sheet}
         </div>
@@ -121,14 +124,25 @@ export function ScreenShell({
       data-register={register}
       className="quiz-ground grid h-dvh grid-rows-[auto_minmax(0,1fr)_auto]"
     >
-      {header ? <div className={cn(COLUMN, 'pt-[14px]')}>{header}</div> : <div />}
+      {header ? <div className={cn(COLUMN, 'pt-[14px] pb-4')}>{header}</div> : <div />}
 
       <div
         ref={scroller}
         onScroll={measure}
-        className={cn('overflow-y-auto overscroll-contain', clipped && 'quiz-scroll-clipped')}
+        className={cn(
+          'overflow-y-auto overscroll-contain',
+          (clipped.top || clipped.bottom) && 'quiz-scroll-fade',
+          clipped.top && '[--scroll-fade-top:20px]',
+          clipped.bottom && '[--scroll-fade-bottom:44px]',
+        )}
       >
-        <div className={cn(COLUMN, 'flex flex-col gap-6 pt-6 pb-2')}>
+        {/*
+          `pt-4` only. The rest of the gap under the progress bar lives on the header row,
+          which does not scroll — padding inside the scroller travels with the content, so
+          the first option ends up flush against the progress segments the moment anyone
+          scrolls.
+        */}
+        <div className={cn(COLUMN, 'flex flex-col gap-6 pt-4 pb-2')}>
           {heading || body ? (
             <header className="flex flex-col gap-3">
               {heading ? (
