@@ -24,8 +24,6 @@ interface ScreenShellProps {
   headingSize?: HeadingSize
   body?: string[]
   register?: Register
-  /** The welcome screen sits on the warmer "molten" ground. */
-  ground?: 'field' | 'molten'
   header?: ReactNode
   children?: ReactNode
   footer?: ReactNode
@@ -61,7 +59,6 @@ export function ScreenShell({
   headingSize = 'lg',
   body,
   register,
-  ground = 'field',
   header,
   children,
   footer,
@@ -105,13 +102,11 @@ export function ScreenShell({
     return () => observer.disconnect()
   }, [measure])
 
-  const groundClass = ground === 'molten' ? 'quiz-ground-molten' : 'quiz-ground'
-
   if (sheet) {
     return (
       <div
         data-register={register}
-        className={cn('grid h-dvh grid-rows-[auto_minmax(0,1fr)]', groundClass)}
+        className="quiz-ground grid h-dvh grid-rows-[auto_minmax(0,1fr)]"
       >
         {header ? <div className={cn(COLUMN, 'pt-[14px]')}>{header}</div> : <div />}
         <div className="mx-auto flex min-h-0 w-full max-w-[430px] flex-col justify-end">
@@ -124,7 +119,7 @@ export function ScreenShell({
   return (
     <div
       data-register={register}
-      className={cn('grid h-dvh grid-rows-[auto_minmax(0,1fr)_auto]', groundClass)}
+      className="quiz-ground grid h-dvh grid-rows-[auto_minmax(0,1fr)_auto]"
     >
       {header ? <div className={cn(COLUMN, 'pt-[14px]')}>{header}</div> : <div />}
 

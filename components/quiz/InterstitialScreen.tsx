@@ -16,6 +16,10 @@ import { PrimaryButton } from './PrimaryButton'
  *
  * The frame gives this screen no back control. It gets one anyway: the only thing behind
  * it is the name field, and a customer who mistyped their name has nowhere to go.
+ *
+ * The ground is the question screens' `quiz-ground`, not the welcome screen's warmer
+ * `quiz-ground-molten`. S1 is the only frame in the flow on the warmer texture — every
+ * other frame, this one included, shares one image and one dimming gradient.
  */
 export function InterstitialScreen({
   copy,
@@ -29,7 +33,7 @@ export function InterstitialScreen({
   onBack?: () => void
 }) {
   return (
-    <div className="quiz-ground-molten relative h-dvh overflow-hidden">
+    <div className="quiz-ground relative h-dvh overflow-hidden">
       {/*
         Decorative — three rings and a core, concentric, centred on the screen rather
         than on the copy. Absolute because it genuinely sits behind the layout.

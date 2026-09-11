@@ -194,7 +194,11 @@
   background-size: cover, cover, cover, cover;
 }
 
-/** The welcome screen sits on a warmer, more saturated variant of the same idea. */
+/**
+ * S1 only. The welcome screen sits on a warmer, more saturated variant of the same idea —
+ * a different texture and a lighter scrim. Every other screen in the flow, including the
+ * S3 interstitial, uses `quiz-ground`.
+ */
 @utility quiz-ground-molten {
   background-color: var(--color-ground-top);
   background-image:
