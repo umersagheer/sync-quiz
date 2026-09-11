@@ -99,6 +99,18 @@ build because the frames are the newer artefact — but somebody should own them
 | Branch education     | `No product mentioned on this screen — education only.` |
 | Branch education     | The `WHY WE ASKED` eyebrow                              |
 | Recognition callouts | The `WE SEE THIS OFTEN` eyebrow                         |
+| S2 name              | The `First name` field label                            |
+| S9 email             | The `Email address` field label                         |
+
+The two field labels were added in the second design-review pass — the copy layer has no
+field labels at all, and the frames label S2 and S9 while leaving S8C's textarea bare.
+
+**S3 is a related but different case.** The copy layer gives it as one sentence,
+`Welcome, [name]. Two minutes — let's see what fits.`; the frame sets it as a 34px
+greeting with an 18px sub-line beneath. The build splits the sentence at its full stop, so
+the words are the copy layer's and only the typesetting is the frame's. Flagged here in
+case the split is not what was intended — a test asserts the two halves rejoin into the
+signed sentence exactly.
 
 The lane subtitles are the notable ones: three of the five are just the copy layer's line
 split at its em dash, but those two are new sentences. The last one is also a compliance-

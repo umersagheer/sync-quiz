@@ -79,6 +79,8 @@
   --shadow-glass: 0 8px 20px rgb(0 0 0 / 0.2);
   --shadow-glass-lg: 0 12px 28px rgb(0 0 0 / 0.32);
   --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.3);
+  /* The lit core at the centre of S3's motif — a wide, offset-free ember glow. */
+  --shadow-motif: 0 0 44px rgb(255 107 43 / 0.85);
 
   /* ---- Type ----------------------------------------------------------------
    * Three faces, deliberately. Satoshi carries every heading; SF Pro (via the
@@ -91,6 +93,10 @@
     ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-source-code), ui-monospace, SFMono-Regular, monospace;
 
+  /* S3's heading is the one place the flow goes bigger than a question heading. */
+  --text-display-lg: 2.125rem; /* 34 */
+  --text-display-lg--line-height: 2.5rem; /* 40 */
+  --text-display-lg--letter-spacing: -0.018em;
   --text-display: 2rem; /* 32 */
   --text-display--line-height: 2.375rem; /* 38 */
   --text-display--letter-spacing: -0.015em;
@@ -101,12 +107,30 @@
   --text-display-sm--line-height: 2.125rem;
   --text-display-sm--letter-spacing: -0.015em;
 
+  /* The sub-line under an interstitial heading. */
+  --text-lead: 1.125rem; /* 18 */
+  --text-lead--line-height: 1.5625rem; /* 25 */
+
+  /* What a customer types is set larger than the UI around it. */
+  --text-field: 1.25rem; /* 20 */
+  --text-field--line-height: 1.625rem; /* 26 */
+  --text-field--letter-spacing: -0.005em;
+
   --text-title: 1.0625rem; /* 17 */
   --text-title--line-height: 1.375rem;
   --text-title--letter-spacing: -0.005em;
 
   --text-body: 1rem; /* 16 */
   --text-body--line-height: 1.375rem;
+
+  /* The uppercase label above a callout — "WE SEE THIS OFTEN", "WHY WE ASKED". */
+  --text-eyebrow: 0.6875rem; /* 11 */
+  --text-eyebrow--line-height: 0.9375rem; /* 15 */
+  --text-eyebrow--letter-spacing: 0.08em;
+
+  /* Recognition-card body — the frames set it one step above `sub`. */
+  --text-note: 0.9375rem; /* 15 */
+  --text-note--line-height: 1.3125rem; /* 21 */
 
   --text-sub: 0.875rem; /* 14 */
   --text-sub--line-height: 1.1875rem;
@@ -209,6 +233,18 @@
   background-color: var(--color-glass-flat);
   border: 0.6px solid var(--color-glass-hairline);
   box-shadow: inset 0 1px 2px rgb(255 255 255 / 0.22);
+}
+
+/**
+ * The "more below" cue on a step whose options overflow the viewport.
+ *
+ * A mask rather than an overlaid gradient strip: the ground is a photographic texture,
+ * so a solid fade would have to match it exactly and would break the moment the gradient
+ * stops move. `ScreenShell` applies this only while the scroller is genuinely clipped —
+ * left on permanently it would blur the last option on every screen that already fits.
+ */
+@utility quiz-scroll-clipped {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent 100%);
 }
 
 body {

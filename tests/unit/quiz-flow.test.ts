@@ -62,6 +62,16 @@ describe('step machine', () => {
     expect(previousStep('qualifier', 'PT141')).toBe('secondary')
     expect(previousStep('qualifier', 'REPAIR')).toBe('discriminator')
   })
+
+  /**
+   * The frames give S3 no back control. It has one anyway — the only thing behind it is
+   * the name field, and a customer who mistyped their name would otherwise be stuck with
+   * it for the whole quiz. That only works while the step genuinely has a predecessor.
+   */
+  it('lets the interstitial go back to the name field', () => {
+    expect(previousStep('interstitial', undefined)).toBe('name')
+    expect(previousStep('interstitial', 'REPAIR')).toBe('name')
+  })
 })
 
 describe('step completeness', () => {

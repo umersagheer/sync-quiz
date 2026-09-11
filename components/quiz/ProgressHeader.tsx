@@ -7,7 +7,7 @@ import { questionProgress } from '@/lib/client/quiz-flow/steps'
 import { sectionLabel } from '@/lib/client/quiz-flow/sections'
 import { cn } from '@/lib/shared/utils/cn'
 
-import { ChevronLeftIcon } from './icons/ChromeIcons'
+import { BackButton } from './BackButton'
 
 interface ProgressHeaderProps {
   step: StepId
@@ -31,14 +31,7 @@ export function ProgressHeader({ step, lane, onBack }: ProgressHeaderProps) {
     <div className="flex flex-col gap-[14px]">
       <div className="flex items-center gap-3">
         {onBack ? (
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Go back"
-            className="glass-quiet text-foreground focus-visible:ring-foreground/70 focus-visible:ring-offset-ground-top grid size-11 shrink-0 place-items-center rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-          >
-            <ChevronLeftIcon />
-          </button>
+          <BackButton onClick={onBack} />
         ) : (
           <span className="size-11 shrink-0" aria-hidden="true" />
         )}

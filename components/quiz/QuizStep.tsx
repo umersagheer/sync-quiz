@@ -2,6 +2,7 @@
 
 import type { ChangeEvent } from 'react'
 import type { StepId } from '@/lib/client/quiz-flow/steps'
+import type { TextScreen } from '@/lib/shared/types/content.types'
 import type {
   Depth,
   DiscriminatorSignal,
@@ -41,6 +42,7 @@ import {
 } from '@/lib/shared/content/screens.content'
 
 import { EducationSheet } from './EducationSheet'
+import { InterstitialScreen } from './InterstitialScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 import { LANE_ICONS } from './icons/LaneIcons'
 import { OptionGroup } from './OptionGroup'
@@ -58,6 +60,17 @@ const descriptionsOf = <V extends string>(options: { value: V; description?: str
 
 const withName = (text: string, name: string | undefined) =>
   text.replace('[name]', name?.trim() || 'there')
+
+/**
+ * The field's label, and whether it is drawn.
+ *
+ * S2 and S9 show one; S8C shows none, so it falls back to the heading and is hidden —
+ * still present for screen readers, because a placeholder is not a label.
+ */
+const fieldLabel = (screen: TextScreen) => ({
+  label: screen.fieldLabel ?? screen.heading,
+  hideLabel: !screen.fieldLabel,
+})
 
 /**
  * One screen of the quiz, chosen by the URL.
@@ -120,21 +133,17 @@ export function QuizStep({ step }: { step: StepId }) {
             blocks programmatic focus without a user gesture, so it would not fire on the
             device this is designed for — and it trips the a11y rule for no gain.
           */}
-          <TextField
-            label={NAME_SCREEN.heading}
-            name="firstName"
-            hideLabel
-            {...text('firstName')}
-          />
+          <TextField {...fieldLabel(NAME_SCREEN)} name="firstName" {...text('firstName')} />
         </ScreenShell>
       )
 
     case 'interstitial':
       return (
-        <ScreenShell
-          {...WELCOME_INTERSTITIAL_SCREEN}
+        <InterstitialScreen
+          copy={WELCOME_INTERSTITIAL_SCREEN}
           heading={withName(WELCOME_INTERSTITIAL_SCREEN.heading, answers.firstName)}
-          footer={nextButton(WELCOME_INTERSTITIAL_SCREEN.cta, false)}
+          onContinue={goNext}
+          onBack={goBack}
         />
       )
 
@@ -343,9 +352,8 @@ export function QuizStep({ step }: { step: StepId }) {
       return (
         <ScreenShell {...NINETY_DAY_SCREEN} header={header} footer={nextButton()}>
           <TextField
-            label={NINETY_DAY_SCREEN.heading}
+            {...fieldLabel(NINETY_DAY_SCREEN)}
             name="ninetyDayGoalText"
-            hideLabel
             multiline
             maxLength={500}
             placeholder={NINETY_DAY_SCREEN.placeholder}
@@ -369,10 +377,9 @@ export function QuizStep({ step }: { step: StepId }) {
           footer={nextButton(EMAIL_SCREEN.cta)}
         >
           <TextField
-            label={EMAIL_SCREEN.heading}
+            {...fieldLabel(EMAIL_SCREEN)}
             name="email"
             type="email"
-            hideLabel
             placeholder="you@example.com"
             {...text('email')}
           />

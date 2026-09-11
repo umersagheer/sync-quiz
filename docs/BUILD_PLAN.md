@@ -443,6 +443,11 @@ Apply the Figma design to the components Phase 3 built, and add `ProgressHeader`
   centred column on the same ground.
 - Six lines of copy appear only in the design and never went through the copy layer.
   Listed in `docs/COPY_BACKLOG.md` §5.
+- **S3 has a back control the frame does not draw.** The frame gives the interstitial no
+  header at all, but the only screen behind it is the name field — blocking a rename for
+  the rest of the quiz is a worse outcome than the deviation.
+- **Every quiz screen scrolls its middle section**, which no frame shows, because no frame
+  is shorter than its own content. See the second design-review pass below.
 
 ### The v3 set — do not build
 
@@ -529,6 +534,50 @@ straight back to the reveal and a second run replayed the first one's answers.
 otherwise a fresh run briefly shows the previous protocol. The welcome screen also clears
 a _completed_ run when Start is pressed, while deliberately leaving an unfinished one
 alone, since the guard allows stepping back to welcome mid-quiz.
+
+### Second design-review pass — layout and rhythm
+
+Umer reviewed the deployed build against the frames again. Six changes, and one of them
+reworks the shell every quiz screen sits in.
+
+**The quiz screens are now a fixed header, a scrolling middle and a fixed CTA.** The
+frames are drawn at 402x874 where nothing overflows; real devices are shorter. The Branch
+A discriminator runs 766px from the back control to the bottom of its CTA, against roughly
+553px of viewport on an iPhone SE — so Continue fell below the fold and the progress bar
+scrolled away with it, on an eleven-question quiz where progress is the trust mechanism.
+
+Built as three grid rows on an `h-dvh` container rather than two `position: fixed` bars.
+Three screens take text input, and a fixed bottom bar on iOS Safari hides behind or
+jitters against the keyboard, because the visual viewport shrinks while the layout
+viewport does not; a grid row does neither. `minmax(0, 1fr)` on the middle row is
+load-bearing — a bare `1fr` takes `min-height: auto`, grows the grid past the viewport and
+pushes the footer straight back off-screen. At 390x844 nothing scrolls and the result is
+the frame. `WelcomeScreen` and the education sheet take the same three rows for the same
+reason: both carry long copy that could push their own CTA off a short screen.
+
+The frames carry no "more below" cue because nothing in them overflows, so the shell
+measures whether its scroller is clipped and fades the bottom edge only while it is.
+
+The other five:
+
+- **S3 was wrong, not just off.** It is a centred composition — concentric rings around a
+  lit core at ~45% of the screen, then a 34px greeting and an 18px sub-line sitting low,
+  then the CTA. It was rendering the copy layer's single sentence top-left with no motif
+  at all. It is now its own component rather than a `ScreenShell` call.
+- **S2 and S9 draw a visible field label** — "First name", "Email address" — and both were
+  hidden. S8C's textarea genuinely has none and stays hidden. The fields themselves were
+  also off: the frames draw a pill (r=31) with 24px side padding and 20/26 text.
+- **The recognition card's accent bar is a sibling of the card, not a child** — 8px from
+  the card's edge, spanning its content box. Nested inside the 20px padding it pushed the
+  text column in another 12px and the card read cramped. Same mistake as the reveal's bar,
+  found the same way.
+- **The reveal's vertical rhythm is not one gap.** 10px from the band to the first label,
+  9px from a label to its card, **76px** from the base card to the block that follows it
+  — identical in all three shapes — and ~48px before the plan selector. It was a flat 24px
+  throughout. Cards also sit at a 20px inset while every piece of chrome around them sits
+  at 28px.
+- **S3 has a back control, which the frame does not give it.** Deliberate: the only thing
+  behind it is the name field, and a customer who mistyped their name had nowhere to go.
 
 ## Phase 6 — Ship
 

@@ -35,9 +35,11 @@ export function ReadBand({
 }) {
   const eyebrow = REVEAL_CHROME.readEyebrow.replace('[name]', firstName.trim().toUpperCase())
 
-  // The band is a fixed 540px in the frame, and that height is load-bearing: the fade to
-  // cream occupies its bottom third, so a content-height band would cut hard against the
-  // page instead of dissolving into it.
+  // The band needs a minimum height, not just its content's: the fade to cream occupies
+  // the bottom third, so a content-height band cuts hard against the page instead of
+  // dissolving into it. The frame fixes it at 540px, but the frame's read carries a
+  // headline and two paragraphs where ours has one signed paragraph — at 540 the extra
+  // 70px is dead dark space. Raise this to 540 when the missing read copy arrives.
   return (
     <header className="reveal-band flex min-h-[470px] flex-col gap-5 px-5 pt-10 pb-14">
       <div className="flex items-center justify-between">

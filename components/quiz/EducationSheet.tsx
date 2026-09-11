@@ -9,6 +9,10 @@ import { PrimaryButton } from './PrimaryButton'
  * mention, no sell. It reaches the bottom of the viewport with only its top corners
  * rounded, and carries its own CTA rather than using the shell's footer.
  *
+ * The body scrolls inside the sheet rather than the sheet growing past the viewport: this
+ * is the longest copy in the quiz, and on a short screen it would otherwise carry its own
+ * CTA off the bottom — the same failure the shell's three rows exist to prevent.
+ *
  * The lead paragraph is set heavier than the body, which is how the frames separate the
  * claim from its explanation.
  */
@@ -24,38 +28,39 @@ export function EducationSheet({
   const [lead, ...rest] = education.body
 
   return (
-    <section className="glass flex min-h-[74dvh] flex-col gap-4 rounded-t-[40px] px-[18px] pt-2.5 pb-[calc(18px+env(safe-area-inset-bottom))]">
-      <span aria-hidden="true" className="bg-foreground-faint mx-auto h-[5px] w-9 rounded-full" />
+    <section className="glass flex max-h-full min-h-[74dvh] flex-col rounded-t-[40px] px-[18px] pt-2.5 pb-[calc(18px+env(safe-area-inset-bottom))]">
+      <span
+        aria-hidden="true"
+        className="bg-foreground-faint mx-auto h-[5px] w-9 shrink-0 rounded-full"
+      />
 
-      <p className="text-accent-soft text-[0.6875rem] leading-[0.9375rem] font-[590] tracking-[0.08em]">
-        {eyebrow}
-      </p>
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain pt-4">
+        <p className="text-eyebrow text-accent-soft font-[590]">{eyebrow}</p>
 
-      <h1 className="font-display text-display-md text-foreground font-medium">
-        {education.heading}
-      </h1>
+        <h1 className="font-display text-display-md text-foreground font-medium">
+          {education.heading}
+        </h1>
 
-      {lead ? (
-        <p className="text-foreground text-[1.125rem] leading-[1.625rem] font-[590]">{lead}</p>
-      ) : null}
+        {lead ? <p className="text-lead text-foreground font-[590]">{lead}</p> : null}
 
-      {rest.map((paragraph) => (
-        <p key={paragraph} className="text-title text-foreground-secondary">
-          {paragraph}
+        {rest.map((paragraph) => (
+          <p key={paragraph} className="text-title text-foreground-secondary">
+            {paragraph}
+          </p>
+        ))}
+
+        <hr className="border-glass-hairline" />
+
+        {/*
+          Design-only line — it does not appear in the copy layer. Logged in
+          docs/COPY_BACKLOG.md as words that never went through copy review.
+        */}
+        <p className="text-caption text-foreground-muted">
+          No product mentioned on this screen — education only.
         </p>
-      ))}
+      </div>
 
-      <hr className="border-glass-hairline" />
-
-      {/*
-        Design-only line — it does not appear in the copy layer. Logged in
-        docs/COPY_BACKLOG.md as words that never went through copy review.
-      */}
-      <p className="text-caption text-foreground-muted">
-        No product mentioned on this screen — education only.
-      </p>
-
-      <PrimaryButton variant="plain" onClick={onContinue} className="mt-auto">
+      <PrimaryButton variant="plain" onClick={onContinue} className="mt-4 shrink-0">
         {education.cta}
       </PrimaryButton>
     </section>

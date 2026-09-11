@@ -11,10 +11,15 @@ import {
 } from '@/lib/shared/content/reveal.content'
 import { cn } from '@/lib/shared/utils/cn'
 
-/** A small uppercase section label. The reveal uses these to head every block. */
+/**
+ * A small uppercase section label. The reveal uses these to head every block.
+ *
+ * Indented 8px past the cards: the frames sit every card at a 20px inset and every piece
+ * of chrome around them — labels, the locked line, the controls, the footnotes — at 28px.
+ */
 export function SectionLabel({ children }: { children: string }) {
   return (
-    <p className="text-accent font-mono text-[0.625rem] leading-[0.8125rem] font-medium tracking-[0.08em]">
+    <p className="text-accent pl-2 font-mono text-[0.625rem] leading-[0.8125rem] font-medium tracking-[0.08em]">
       {children}
     </p>
   )
@@ -31,13 +36,15 @@ export function PlanSelector({
   months,
   onChange,
   total,
+  className,
 }: {
   months: PlanMonths
   onChange: (months: PlanMonths) => void
   total: string | null
+  className?: string
 }) {
   return (
-    <section className="flex flex-col gap-3">
+    <section className={cn('flex flex-col gap-3', className)}>
       <SectionLabel>{REVEAL_CHROME.planLabel}</SectionLabel>
 
       <div className="bg-card border-card-hairline rounded-option relative border">
@@ -70,13 +77,13 @@ export function PlanSelector({
         </div>
       </div>
 
-      <p className="text-accent font-mono text-[0.59375rem] font-medium tracking-[0.06em]">
+      <p className="text-accent pl-2 font-mono text-[0.59375rem] font-medium tracking-[0.06em]">
         {REVEAL_CHROME.planDefaultNote}
       </p>
 
       {/* §5.4 — verbatim, do not reword. The frame sets it on the chip cream with a
           short rounded accent bar inset from the edge, not a full-height border. */}
-      <div className="bg-chip relative rounded-[14px] p-[18px]">
+      <div className="bg-chip relative mx-2 rounded-[14px] p-[18px]">
         {/*
           The bar sits flush to the box's left edge, not inside its padding — in the
           frame it is a sibling of the box rather than a child, so the 18px padding
@@ -95,15 +102,18 @@ export function PlanSelector({
 }
 
 /** Shape 1 only — the trust artefact of the whole system. */
-export function TrustBlock() {
+export function TrustBlock({ className }: { className?: string }) {
   return (
-    <section className="bg-chip relative flex flex-col gap-3 rounded-[20px] p-5">
+    <section className={cn('bg-chip relative flex flex-col gap-3 rounded-[20px] p-5', className)}>
       {/* This bar is inset 8px, unlike the locked line's — the frame treats them differently. */}
       <span
         aria-hidden="true"
         className="bg-accent absolute top-5 left-2 h-[54px] w-[3px] rounded-full"
       />
-      <SectionLabel>{TRUST_BLOCK.eyebrow}</SectionLabel>
+      {/* Inside a card the label takes the card's own padding, not the page's 28px. */}
+      <p className="text-accent font-mono text-[0.625rem] leading-[0.8125rem] font-medium tracking-[0.08em]">
+        {TRUST_BLOCK.eyebrow}
+      </p>
       <h2 className="font-display text-card-foreground text-[1.25rem] leading-[1.5rem] font-medium">
         {TRUST_BLOCK.heading}
       </h2>
@@ -159,11 +169,13 @@ export function RevealControls({
   adjunctRemoved,
   onRemoveAdjunct,
   onStartOver,
+  className,
 }: {
   canRemoveAdjunct: boolean
   adjunctRemoved: boolean
   onRemoveAdjunct: () => void
   onStartOver: () => void
+  className?: string
 }) {
   // Transparent outline pills sitting directly on the cream page — the frame gives them
   // no fill at all. Height 44, hairline at 18%, label at 70%.
@@ -171,7 +183,7 @@ export function RevealControls({
     'rounded-pill font-mono h-11 border border-[rgb(29_29_27_/_0.18)] px-5 text-[0.6875rem] font-medium tracking-[0.08em] text-[rgb(29_29_27_/_0.7)] focus-visible:ring-accent focus-visible:ring-2 focus-visible:outline-none'
 
   return (
-    <section className="flex flex-col items-center gap-3.5">
+    <section className={cn('mx-2 flex flex-col items-center gap-3.5', className)}>
       <div className="flex w-full gap-2">
         <button
           type="button"

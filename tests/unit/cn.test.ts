@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs'
+
 import { describe, expect, it } from 'vitest'
 
-import { cn } from '@/lib/shared/utils/cn'
+import { cn, TEXT_SIZE_TOKENS } from '@/lib/shared/utils/cn'
 
 /**
  * Regression: tailwind-merge does not know this project's `--text-*` tokens, so it
@@ -26,6 +28,22 @@ describe('cn', () => {
 
     expect(result).toContain(size)
     expect(result).toContain(colour)
+  })
+
+  /**
+   * The list in `cn.ts` is hand-maintained, so guard it against the stylesheet rather
+   * than against memory: a new `--text-*` token that nobody registers is exactly the bug
+   * this file exists to catch.
+   */
+  it('knows every --text-* token declared in globals.css', () => {
+    const css = readFileSync(new URL('../../styles/globals.css', import.meta.url), 'utf8')
+    const declared = [...css.matchAll(/^\s*--text-([a-z0-9-]+):/gm)]
+      .map(([, name]) => name)
+      // `--text-display--line-height` is a modifier on `display`, not a size of its own.
+      .filter((name) => !name.includes('--'))
+
+    expect(declared.length).toBeGreaterThan(0)
+    expect([...new Set(declared)].sort()).toEqual([...TEXT_SIZE_TOKENS].sort())
   })
 
   /** Genuine conflicts must still collapse, or the helper is pointless. */

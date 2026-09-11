@@ -112,8 +112,15 @@ export function RevealScreen() {
           onDismiss={startOver}
         />
 
-        <div className="flex flex-col gap-6 px-5 pt-8">
-          <section className="flex flex-col gap-3">
+        {/*
+          The frames' vertical rhythm, which is not a single gap: the first label sits
+          10px under the band, a card 9px under its label, and the block that follows the
+          base protocol a deliberate 76px below it — that gap is the page's one real
+          breath, and the same in all three shapes. The plan selector then comes ~48px
+          after whatever preceded it.
+        */}
+        <div className="flex flex-col px-5 pt-[10px]">
+          <section className="flex flex-col gap-[9px]">
             <SectionLabel>{REVEAL_CHROME.baseLabel}</SectionLabel>
             <ProtocolCard
               protocol={result.base}
@@ -124,7 +131,7 @@ export function RevealScreen() {
           </section>
 
           {result.supporting && !adjunctRemoved ? (
-            <section className="flex flex-col gap-3">
+            <section className="mt-[76px] flex flex-col gap-[9px]">
               <SectionLabel>{REVEAL_CHROME.supportingLabel}</SectionLabel>
               <ProtocolCard
                 protocol={result.supporting}
@@ -136,21 +143,22 @@ export function RevealScreen() {
           ) : null}
 
           {result.shape === 'SHAPE_2_SOLO_BLEND' ? (
-            <section className="flex flex-col gap-3">
+            <section className="mt-[76px] flex flex-col gap-[9px]">
               <SectionLabel>{REVEAL_CHROME.pairsLabel}</SectionLabel>
               <PairsWellWithCard added={pairingAdded} onAdd={() => setPairingAdded(true)} />
             </section>
           ) : null}
 
-          {result.shape === 'SHAPE_1_SINGLE' ? <TrustBlock /> : null}
+          {result.shape === 'SHAPE_1_SINGLE' ? <TrustBlock className="mt-[76px]" /> : null}
 
-          <PlanSelector months={months} onChange={setMonths} total={total} />
+          <PlanSelector months={months} onChange={setMonths} total={total} className="mt-12" />
 
           <RevealControls
             canRemoveAdjunct={Boolean(result.supporting)}
             adjunctRemoved={adjunctRemoved}
             onRemoveAdjunct={() => setAdjunctRemoved((was) => !was)}
             onStartOver={startOver}
+            className="mt-6"
           />
         </div>
       </div>

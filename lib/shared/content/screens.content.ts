@@ -27,12 +27,20 @@ export const WELCOME_SCREEN: ScreenCopy = {
 export const NAME_SCREEN: TextScreen = {
   register: 'direct',
   heading: 'What should we call you?',
+  fieldLabel: 'First name',
 }
 
-/** S3 · WELCOME INTERSTITIAL · WARM. Not a question. */
+/**
+ * S3 · WELCOME INTERSTITIAL · WARM. Not a question.
+ *
+ * The copy layer gives this as one sentence. The frame draws it as two texts — a 34px
+ * greeting and an 18px sub-line beneath it, in different weights — so the sentence is
+ * split at its full stop. Same words, same order; only the typesetting differs.
+ */
 export const WELCOME_INTERSTITIAL_SCREEN: ScreenCopy = {
   register: 'warm',
-  heading: "Welcome, [name]. Two minutes — let's see what fits.",
+  heading: 'Welcome, [name].',
+  body: ["Two minutes — let's see what fits."],
   cta: 'Continue',
 }
 
@@ -165,5 +173,6 @@ export const EMAIL_SCREEN: TextScreen = {
   body: [
     "Your read and your assembled stack — then you'll move into the clinical assessment with a licensed provider. You won't be asked any of this twice.",
   ],
+  fieldLabel: 'Email address',
   cta: 'Show me my personalised protocol',
 }

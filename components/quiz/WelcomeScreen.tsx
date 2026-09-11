@@ -14,6 +14,9 @@ import { SyncLogo } from './icons/SyncLogo'
  * behind the copy, and a caption under the CTA. The body is set in Satoshi here (not the
  * UI face) — the warm register the copy layer describes is carried by the type as much
  * as the words.
+ *
+ * Same three rows as `ScreenShell`: this screen carries the longest copy in the quiz, and
+ * on a short viewport it would otherwise push Start below the fold.
  */
 export function WelcomeScreen({ copy, onStart }: { copy: ScreenCopy; onStart: () => void }) {
   const completedAnswers = useQuizStore((state) => state.completedAnswers)
@@ -32,29 +35,31 @@ export function WelcomeScreen({ copy, onStart }: { copy: ScreenCopy; onStart: ()
   }
 
   return (
-    <div className="quiz-ground-molten flex min-h-dvh flex-col">
-      <div className="relative mx-auto flex w-full max-w-[430px] flex-1 flex-col px-[18px] pt-[18px] pb-[calc(18px+env(safe-area-inset-bottom))]">
-        <SyncLogo className="text-foreground mx-auto shrink-0" />
+    <div className="quiz-ground-molten relative h-dvh overflow-hidden">
+      {/* Motif — three concentric rings behind the copy. Decorative. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-[34%] left-1/2 grid -translate-x-1/2 -translate-y-1/2 place-items-center"
+      >
+        <span className="col-start-1 row-start-1 size-[310px] rounded-full border border-white/[0.06]" />
+        <span className="col-start-1 row-start-1 size-[230px] rounded-full border border-white/10" />
+        <span className="col-start-1 row-start-1 size-[150px] rounded-full border border-white/[0.16]" />
+      </div>
 
-        {/* Motif — three concentric rings behind the copy. Decorative. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-[230px] flex justify-center"
-        >
-          <span className="relative grid place-items-center">
-            <span className="absolute size-[310px] rounded-full border border-white/[0.06]" />
-            <span className="absolute size-[230px] rounded-full border border-white/10" />
-            <span className="size-[150px] rounded-full border border-white/[0.16]" />
-          </span>
-        </div>
+      <div className="relative mx-auto grid h-full w-full max-w-[430px] grid-rows-[auto_minmax(0,1fr)_auto] px-[18px] pt-[18px] pb-[calc(18px+env(safe-area-inset-bottom))]">
+        <SyncLogo className="text-foreground mx-auto" />
 
-        <div className="relative flex flex-1 flex-col justify-center gap-4 text-center">
-          <h1 className="font-display text-display text-foreground font-medium">{copy.heading}</h1>
-          {copy.body?.map((line) => (
-            <p key={line} className="font-display text-body text-foreground-secondary">
-              {line}
-            </p>
-          ))}
+        <div className="overflow-y-auto overscroll-contain">
+          <div className="flex min-h-full flex-col justify-center gap-4 py-6 text-center">
+            <h1 className="font-display text-display text-foreground font-medium">
+              {copy.heading}
+            </h1>
+            {copy.body?.map((line) => (
+              <p key={line} className="font-display text-body text-foreground-secondary">
+                {line}
+              </p>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">

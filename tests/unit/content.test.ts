@@ -117,6 +117,31 @@ describe('screens', () => {
 
     expect(selfDescribe?.freeText).toBe(true)
   })
+
+  /**
+   * The frames draw a visible label on S2 and S9 and none on S8C. `hideLabel` is derived
+   * from the field's absence, so a label that goes missing here silently hides itself on
+   * the screen too.
+   */
+  it('labels the fields the frames label, and only those', () => {
+    expect(NAME_SCREEN.fieldLabel).toBe('First name')
+    expect(EMAIL_SCREEN.fieldLabel).toBe('Email address')
+    expect(NINETY_DAY_SCREEN.fieldLabel).toBeUndefined()
+  })
+
+  /**
+   * S3 is split into a heading and a sub-line to match the frame. The split is
+   * typesetting, not a rewrite — put back together it has to be the copy layer's
+   * sentence, unchanged.
+   */
+  it('keeps the interstitial copy intact across the heading/sub-line split', () => {
+    const rejoined = [
+      WELCOME_INTERSTITIAL_SCREEN.heading,
+      ...(WELCOME_INTERSTITIAL_SCREEN.body ?? []),
+    ].join(' ')
+
+    expect(rejoined).toBe("Welcome, [name]. Two minutes — let's see what fits.")
+  })
 })
 
 describe('branches', () => {

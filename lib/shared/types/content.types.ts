@@ -35,6 +35,12 @@ export interface ChoiceScreen<V extends string> extends ScreenCopy {
 
 export interface TextScreen extends ScreenCopy {
   placeholder?: string
+  /**
+   * Visible label above the field. S2 and S9 draw one; S8C's textarea does not, and its
+   * label falls back to the heading and is hidden. Design-sourced — the copy layer has
+   * no field labels at all, so both strings are logged in docs/COPY_BACKLOG.md.
+   */
+  fieldLabel?: string
 }
 
 /**
